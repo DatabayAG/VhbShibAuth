@@ -182,7 +182,10 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     }
 
 
-
+    /**
+     * TODO: redirect after login when deep link is given
+     * @param $user
+     */
     protected function checkDeepLink($user)
     {
         global $DIC;
