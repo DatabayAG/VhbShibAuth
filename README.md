@@ -23,7 +23,7 @@ Wenn Sie das Plugin als ZIP-Datei aus GitHub herunterladen, benennen Sie das ent
 Customizing/global/plugins/Services/AuthShibboleth/ShibbolethAuthenticationHook
 (erzeugen Sie die Unterverzeichnisse, falls nötig)
 
-2. Wechseln Sie zu Asministration > Plugins
+2. Wechseln Sie zu Administration > Plugins
 3. Wählen Sie die Aktion  "Aktualisieren" für das VhbShibAuth-Plugin
 4. Wählen Sie die Aktion  "Aktivieren" für das VhbShibAuth-Plugin
 
@@ -39,7 +39,7 @@ gültig bleibt, muss die Location "__vhb__" der Shibboleth-Sitzung auf der gleic
 Der Standard-Aufruf "__vhb__/resolver.php " für Deep-Links aus dem vhb-Kursportal muss daher noch vor der Initialisierung der Shibboleth-Sitzung auf "__vhb__"
 ohne Unterpfad weitergeleitet werden.
 
-In der folgenden Beispuel-Konfiguration wird davon ausgegangen, dass ILIAS direkt (ohne Unterpfad) im DOCUMENT ROOT von www.demo.odl.org installiert ist:
+In der folgenden Beispiel-Konfiguration wird davon ausgegangen, dass ILIAS direkt (ohne Unterpfad) im DOCUMENT ROOT von www.demo.odl.org installiert ist:
 
 ```
 ## Shibboleth-Login bei ILIAS
@@ -81,12 +81,11 @@ Alias /__vhb__                  /srv/www/vhosts/demo/htdocs/shib_login.php
 ILIAS-Konfiguration
 -------------------
 
-Konfigurieren und Aktivieren Sie zunächst unter "Administration > Authentifizierung / Neuanmeldung > Shibboleth" die Shibboleth-Authentifizierung.
-Treffen Sie dabei die notwendigen Einstellungen:
+Konfigurieren und aktivieren Sie zunächst unter "Administration > Authentifizierung / Neuanmeldung > Shibboleth" die Standard-Shibboleth-Authentifizierung von ILIAS. Treffen Sie dabei die notwendigen Einstellungen:
 
 * Shibboleth-Authentifizierung aktivieren: ja
 * Erlaube lokale Authentifizierung: ja
-* Generelle Rolle für Shibboleth-Benutzer: User (oder Guest, je nach ILIAS-Installation)
+* Generelle Rolle für Shibboleth-Benutzer: User (oder andere, je nach Ihrer ILIAS-Installation)
 * Name der Shibboleth-Föderation: vhb
 * Auswahl der Organisation: Anmeldebereich selber gestalten
 * Eindeutiges Shibboleth Attribut: eduPersonPrincipalName
@@ -94,8 +93,8 @@ Treffen Sie dabei die notwendigen Einstellungen:
 * Attribut für Nachnamen: sn
 * Attribut für E-Mailadresse: mail
 
-In der Regel wird die Authentifizierung dich Klick auf den Kurs-Link im vhb-Portal angestoßen und dabei der gewünschte Kurs alls "Deep-Link" übergeben.
-Wenn Sie die vhb-Authentifizierung auf der Login-Seite von ILIAS verlinken möchten, können Sie dort einfach einen Link auf die "__vhb__" eintragen, im obigen Beispiel:
+In der Regel wird die Authentifizierung durch Klick auf den Kurs-Link im vhb-Portal angestoßen und dabei der gewünschte Kurs als "Deep-Link" übergeben.
+Wenn Sie die vhb-Authentifizierung auf der Login-Seite von ILIAS verlinken möchten, können Sie dort einfach einen Link auf  "__vhb__" eintragen, im obigen Beispiel:
 https://www.demo.odl.org/__vhb__
 
 
