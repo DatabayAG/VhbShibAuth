@@ -4,7 +4,7 @@
 /**
  * Vhb Shibboleth Authentication plugin config class
  *
- * @author Fred Neumann <fred.neumann@ili.fau.de>
+ * @author Fred Neumann <fred.neumann@fau.de>
  *
  */
 class ilVhbShibAuthConfig
@@ -45,18 +45,22 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'entitle_settings',
             'Kurszuweisungs-Einstellungen',
-            'Einstellungen zum Eintragen des Nutzers in den entsprechenden ILIAS-Kurs',
+            'Einstellungen zum Eintragen des Nutzers in den entsprechenden ILIAS-Kurs. Das Shibboleth-Attribut "eduPersonEntitlement" kann mehrere, durch Semikolon getrennte Einträge der folgenden Form enthalten:<br/>'
+            .'<code>urn:mace:vhb.org:entitlement:lms:student:uni-erlangen.de:LV_463_1227_1_67_1</code><br/><br/>'
+            .'<code>student</code> ist die Nutzerrolle der Kurszuordnung bei der vhb.<br/>'
+            .'<code>uni-erlangen.de</code> ist der Scope, d.h. eine Kennung der anbietenden Hochschule.<br/>'
+            .'<code>LV_463_1227_1_67_1</code> ist die Lehrveranstaltungsnummer der vhb. Ein zugehöriger ILIAS-Kurs muss in seinen Metadaten unter "Allgemein" eine Kennung mit Katalog "vhb" und der LV-Nummer als Eintrag haben.',
             ilVhbShibAuthParam::TYPE_HEAD
         );
         $params[] = ilVhbShibAuthParam::_create(
             'local_scope',
             'Lokaler Scope',
-            'Scope der eigenen Hochschule im Attribut der Kursbuchungen (eduPersonEntitlement)'
+            'Scope der eigenen Hochschule im Shibboleth-Attribut "eduPersonEntitlement", also die Entsprechung zu <code>uni-erlangen.de</code>. Es wird mur für Kurse mit diesem Scope eine Zuordnung vorgenommen.'
         );
         $params[] = ilVhbShibAuthParam::_create(
             'evaluator_role',
             'Evaluatorenrolle',
-            'Suchmuster für Namen der Kursrolle, die Evaluatoren zugewiesen werden soll'
+            'Suchmuster für Namen der ILIAS-Kursrolle, die Evaluatoren zugewiesen werden soll. Evaluatoren haben im Shibboleth-Attribut "eduPersonEntitlement" die Nutzerrolle "evaluator". Sie sollen im ILIAS-Kurs eine entsprechende Kursrolle bekommen. Mit dem Suchmuster wird in den Titeln aller Rollen des gefundenen Kurses nach der Evaluatoren-Rolle gesucht. Das Muster kann "?" oder "*" als Platzhalter für einzelne oder beliebig viele Zeichen enthalten.'
         );
 
         foreach ($params as $param)

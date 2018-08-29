@@ -4,7 +4,7 @@
 /**
  * Vhb Shibboleth Authentication Matching functions
  *
- * @author Fred Neumann <fred.neumann@ili.fau.de>
+ * @author Fred Neumann <fred.neumann@fau.de>
  *
  */
 class ilVhbShibAuthMatching
@@ -22,10 +22,10 @@ class ilVhbShibAuthMatching
     protected $user;
 
     /**
-     * @var array lvnr => ['ref_id' => int, 'obj_id' => int, 'title' => int]
+     * list of relevant ILIAS courses
+     * @var array ref_id => ['obj_id' => int, 'title' => int, 'lv_patterns' => [string, string, ...], ...]
      */
-    protected $lv_courses;
-
+    protected $courses;
 
 
     /**
@@ -50,26 +50,24 @@ class ilVhbShibAuthMatching
      */
     public function getTargetCourseRefId($lvnr)
     {
-        foreach ($this->findMatchingIliasCourses($lvnr) as $course)
+        foreach ($this->findMatchingIliasCourses($lvnr) as $ref_id => $data)
         {
-            return $course['ref_id'];
+            return $ref_id;
         }
     }
 
 
     /**
-     * Assign the courses to the user that match the entitled courses
+     * Assign the ILIAS courses to the user that match the entitled vhb course
      */
     public function assingMatchingCourses()
     {
         foreach ($this->getEntitledVhbCourses() as $lvnr => $role)
         {
-            foreach ($this->findMatchingIliasCourses($lvnr) as $course)
+            foreach ($this->findMatchingIliasCourses($lvnr) as $ref_id => $data)
             {
-                $this->lv_courses[$lvnr] = $course;
-
                 /** @var ilCourseParticipants $cp */
-                $cp = ilCourseParticipants::_getInstanceByObjId($course['obj_id']);
+                $cp = ilCourseParticipants::_getInstanceByObjId($data['obj_id']);
                 if (!$cp->isAssigned($this->user->getId()))
                 {
                     switch($role)
@@ -80,7 +78,7 @@ class ilVhbShibAuthMatching
 
                         case 'evaluation':
                             $pattern = $this->config->get('evaluator_role');
-                            $this->assignMatchingCourseRole($course['ref_id'], $pattern);
+                            $this->assignMatchingCourseRole($ref_id, $pattern);
                             break;
                     }
                 }
@@ -113,7 +111,7 @@ class ilVhbShibAuthMatching
 
 
     /**
-     * Get the entitled courses
+     * Get the vhb courses for which the currently authentified user is entitled
      *
      * @return array    lv_nr => role
      */
@@ -141,42 +139,61 @@ class ilVhbShibAuthMatching
     /**
      * Find ILIAS courses that match a certain LV number
      * @param string $lvnr
-     * @return array    ref_id => ['ref_id' => int, 'obj_id' => int, 'title' => int]
+     * @return array    ref_id => ['obj_id' => int, 'title' => int, 'lv_patterns' => [string, string, ...], ...]
      */
-    public function findMatchingIliasCourses($lvnr)
+    protected function findMatchingIliasCourses($lvnr)
     {
-        // find vhb course by catalog
-        $query = "SELECT o.obj_id, o.title, m.entry FROM il_meta_identifier m ".
-            " INNER JOIN object_data o ON m.obj_id = o.obj_id ".
-            " WHERE m.obj_type = 'crs'".
-            " AND m.catalog = 'vhb'";
-        $result = $this->db->query($query);
-
         $courses = array();
-        while ($row = $this->db->fetchAssoc($result))
+        foreach ($this->findRelevantIliasCourses() as $ref_id => $data)
         {
-            // use file name matching with wildcards to get courses with the LV number
-            // semester independend courses can have the following entries: LV_328_822_1_*_1
-            if (fnmatch(trim($row['entry']), $lvnr))
+            foreach ($data['lv_patterns'] as $pattern)
             {
+                // use file name matching with wildcards to get courses with the LV number
+                // semester independent courses can have the following entries: LV_328_822_1_*_1
+                if (fnmatch(trim($pattern), $lvnr))
+                {
+                    $courses[$ref_id] = $data;
+                }
+            }
+        }
+        return $courses;
+    }
+
+
+    /**
+     * Find active ILIAS courses with an LV pattern in their meta data
+     * @return array   ref_id => ['obj_id' => int, 'title' => int, 'lv_patterns' => [string, string, ...], ...]
+     */
+
+    protected function findRelevantIliasCourses()
+    {
+        if (!isset($this->courses)) {
+            // find vhb course by catalog
+            $query = "SELECT o.obj_id, o.title, m.entry FROM il_meta_identifier m " .
+                " INNER JOIN object_data o ON m.obj_id = o.obj_id " .
+                " WHERE m.obj_type = 'crs'" .
+                " AND m.catalog = 'vhb'";
+            $result = $this->db->query($query);
+
+            $this->courses = array();
+            while ($row = $this->db->fetchAssoc($result)) {
                 if (ilObject::_hasUntrashedReference($row["obj_id"])) {
                     if (ilObjCourseAccess::_isActivated($row["obj_id"])) {
-                        foreach (ilObject::_getAllReferences($row["obj_id"]) as $ref_id)
-                        {
-                            $courses[$ref_id] = array(
-                                'ref_id' => $ref_id,
-                                'obj_id' => $row["obj_id"],
-                                'title' => $row['title']
-                            );
-
-                            // currently return only the first course
-                            return $courses;
+                        foreach (ilObject::_getAllReferences($row["obj_id"]) as $ref_id) {
+                            if (!isset($courses[$ref_id])) {
+                                $this->courses[$ref_id] = array(
+                                    'obj_id' => $row["obj_id"],
+                                    'title' => $row['title'],
+                                    'lv_patterns' => array()
+                                );
+                            }
+                            $this->courses[$ref_id]['lv_patterns'][] = $row['entry'];
                         }
                     }
                 }
             }
         }
 
-        return $courses;
+        return $this->courses;
     }
 }

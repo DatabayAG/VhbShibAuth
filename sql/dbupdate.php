@@ -5,7 +5,7 @@
 /**
  * Database creation script.
  *
- * @author Fred Neumann <fred.neumann@ili.fau.de>
+ * @author Fred Neumann <fred.neumann@fau.de>
  *
  */
 ?>

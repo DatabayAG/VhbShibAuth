@@ -3,6 +3,9 @@
 
 /**
  * Class ilVhbShibAuthParam
+ *
+ * @author Fred Neumann <fred.neumann@fau.de>
+ *
  */
 class ilVhbShibAuthParam
 {
