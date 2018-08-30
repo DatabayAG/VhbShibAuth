@@ -10,7 +10,7 @@ Autor:
 Verwendung
 ----------
 Das Plugin kann im Zusammenhang mit der Standard-Shibboleth-Authentifizierung von ILAS eingesetzt werden und ermöglicht die automatische Zuordnung
-von ILIAS-Kursen beim Login aus dem im Shibboleth-Verbund der Virtuellen Hochschule Bayern (vhb).
+von ILIAS-Kursen beim Login aus dem Shibboleth-Verbund der Virtuellen Hochschule Bayern (vhb).
 Zusätzlich werden Kurslinks aus dem vhb-Portal unterstützt, so dass ein Student nach dem Kogin automatisch im gewünschten Kurs landet.
 
 Installation
