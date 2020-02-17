@@ -55,7 +55,7 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'local_scope',
             'Lokaler Scope',
-            'Scope der eigenen Hochschule im Shibboleth-Attribut "eduPersonEntitlement", also die Entsprechung zu <code>uni-erlangen.de</code>. Es wird mur für Kurse mit diesem Scope eine Zuordnung vorgenommen.'
+            'Scope der eigenen Hochschule im Shibboleth-Attribut "eduPersonEntitlement", also die Entsprechung zu <code>uni-erlangen.de</code>. Es wird nur für Kurse mit diesem Scope eine Zuordnung vorgenommen.'
         );
         $params[] = ilVhbShibAuthParam::_create(
             'evaluator_role',
