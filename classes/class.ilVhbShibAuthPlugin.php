@@ -123,7 +123,9 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      */
     public function afterCreateUser(ilObjUser $user)
     {
-        $this->getMatching($user)->assingMatchingCourses();
+        $matching = $this->getMatching($user);
+        $matching->assingMatchingCourses();
+        $matching->updateUserAttributes();
         $this->checkDeepLink($user);
         return $user;
     }
@@ -166,7 +168,9 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      */
     public function afterUpdateUser(ilObjUser $user)
     {
-        $this->getMatching($user)->assingMatchingCourses();
+        $matching = $this->getMatching($user);
+        $matching->assingMatchingCourses();
+        $matching->updateUserAttributes();
         $this->checkDeepLink($user);
         return $user;
     }

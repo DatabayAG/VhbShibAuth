@@ -35,7 +35,9 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_attrib',
             'Attribut Benutzerkennung',
-            'Dieses Shibboleth-Attribut wird auf das Suchmuster für lokale Benutzer überprüft.'
+            'Dieses Shibboleth-Attribut wird auf das Suchmuster für lokale Benutzer überprüft.',
+            ilVhbShibAuthParam::TYPE_TEXT,
+            'eduPersonPrincipalName'
         );
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_pattern',
@@ -60,7 +62,16 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'evaluator_role',
             'Evaluatorenrolle',
-            'Suchmuster für Namen der ILIAS-Kursrolle, die Evaluatoren zugewiesen werden soll. Evaluatoren haben im Shibboleth-Attribut "eduPersonEntitlement" die Nutzerrolle "evaluator". Sie sollen im ILIAS-Kurs eine entsprechende Kursrolle bekommen. Mit dem Suchmuster wird in den Titeln aller Rollen des gefundenen Kurses nach der Evaluatoren-Rolle gesucht. Das Muster kann "?" oder "*" als Platzhalter für einzelne oder beliebig viele Zeichen enthalten.'
+            'Suchmuster für Namen der ILIAS-Kursrolle, die Evaluatoren zugewiesen werden soll. Evaluatoren haben im Shibboleth-Attribut "eduPersonEntitlement" die Nutzerrolle "evaluator". Sie sollen im ILIAS-Kurs eine entsprechende Kursrolle bekommen. Mit dem Suchmuster wird in den Titeln aller Rollen des gefundenen Kurses nach der Evaluatoren-Rolle gesucht. Das Muster kann "?" oder "*" als Platzhalter für einzelne oder beliebig viele Zeichen enthalten.',
+            ilVhbShibAuthParam::TYPE_TEXT,
+            'Kursgast*'
+        );
+        $params[] = ilVhbShibAuthParam::_create(
+            'guest_role',
+            'Gastrolle',
+            'Suchmuster für Namen der ILIAS-Kursrolle, die Gästen zugewiesen werden soll. Evaluatoren haben im Shibboleth-Attribut "eduPersonEntitlement" die Nutzerrolle "appr". Sie sollen im ILIAS-Kurs eine entsprechende Kursrolle bekommen. Mit dem Suchmuster wird in den Titeln aller Rollen des gefundenen Kurses nach der Gast-Rolle gesucht. Das Muster kann "?" oder "*" als Platzhalter für einzelne oder beliebig viele Zeichen enthalten.',
+            ilVhbShibAuthParam::TYPE_TEXT,
+            'Kursgast*'
         );
 
         foreach ($params as $param)

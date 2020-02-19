@@ -80,12 +80,39 @@ class ilVhbShibAuthMatching
                             $pattern = $this->config->get('evaluator_role');
                             $this->assignMatchingCourseRole($ref_id, $pattern);
                             break;
+
+                        case 'appr':
+                            $pattern = $this->config->get('guest_role');
+                            $this->assignMatchingCourseRole($ref_id, $pattern);
+                            break;
                     }
                 }
             }
         }
     }
 
+    /**
+     * Apply specific attributes coming from the vhb
+     */
+    public function updateUserAttributes()
+    {
+        switch ($_SERVER['schacGender']) {
+            case '0':
+                $gender = 'n';
+                break;
+            case '1':
+                $gender = 'm';
+                break;
+            case '2':
+                $gender = 'f';
+                break;
+            default:
+                $gender = 'n';
+        }
+
+        $this->user->setGender($gender);
+        $this->user->update();
+    }
 
     /**
      * Assign the course role that matches the configured pattern for the vhb role
