@@ -94,8 +94,30 @@ class ilVhbShibAuthMatching
     /**
      * Apply specific attributes coming from the vhb
      */
-    public function updateUserAttributes()
+    public function setUserAttributes()
     {
+        if ($this->isLocalUser())
+        {
+            $attrib = $_SERVER[$this->config->get('local_user_attrib')];
+            $suffix = $this->config->get('local_user_suffix');
+
+            if ($this->user->isNew() && $this->config->get('local_user_take_login'))
+            {
+                $login = substr($attrib, 0, strpos($attrib, $suffix));
+                $appendix = null;
+                $login_tmp = $login;
+                while ($this->loginExists($login)) {
+                    $login = $login_tmp . $appendix;
+                    $appendix++;
+                }
+                $this->user->setLogin($login);
+            }
+
+            if ($this->config->get('local_user_auth_mode')) {
+                $this->user->setAuthMode($this->config->get('local_user_auth_mode'));
+            }
+        }
+
         switch ($_SERVER['schacGender']) {
             case '0':
                 $gender = 'n';
@@ -111,8 +133,24 @@ class ilVhbShibAuthMatching
         }
 
         $this->user->setGender($gender);
-        $this->user->update();
     }
+
+
+    /**
+     * Check if the user is a local user
+     * @return bool
+     */
+    protected function isLocalUser()
+    {
+        $attrib = $_SERVER[$this->config->get('local_user_attrib')];
+        $suffix = $this->config->get('local_user_suffix');
+
+        if (!empty($attrib) && !empty($suffix) && strpos($attrib, $suffix) > 0) {
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * Assign the course role that matches the configured pattern for the vhb role
@@ -191,7 +229,6 @@ class ilVhbShibAuthMatching
      * Find active ILIAS courses with an LV pattern in their meta data
      * @return array   ref_id => ['obj_id' => int, 'title' => int, 'lv_patterns' => [string, string, ...], ...]
      */
-
     protected function findRelevantIliasCourses()
     {
         if (!isset($this->courses)) {
@@ -223,4 +260,24 @@ class ilVhbShibAuthMatching
 
         return $this->courses;
     }
+
+    /**
+     * @param $login
+     * @param $usr_id
+     *
+     * @return bool
+     */
+    protected function loginExists($login)
+    {
+        global $DIC;
+        $ilDB = $DIC->database();
+
+        $query = 'SELECT usr_id FROM usr_data WHERE login = ' . $ilDB->quote($login, 'text');
+        $res = $ilDB->query($query);
+        if ($row = $ilDB->fetchAssoc($res)) {
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -86,8 +86,8 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     }
 
     /**
+     * Not called by shib authentication!
      * @param ilObjUser $user
-     *
      * @return ilObjUser
      */
     public function beforeLogin(ilObjUser $user)
@@ -97,8 +97,8 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
 
 
     /**
+     * Not called by shib authentication!
      * @param ilObjUser $user
-     *
      * @return ilObjUser
      */
     public function afterLogin(ilObjUser $user) {
@@ -107,11 +107,15 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
 
 
     /**
-     * @param ilObjUser $user
      *
+     * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function beforeCreateUser(ilObjUser $user) {
+    public function beforeCreateUser(ilObjUser $user)
+    {
+        $matching = $this->getMatching($user);
+        $matching->setUserAttributes();
+
         return $user;
     }
 
@@ -125,7 +129,6 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     {
         $matching = $this->getMatching($user);
         $matching->assingMatchingCourses();
-        $matching->updateUserAttributes();
         $this->checkDeepLink($user);
         return $user;
     }
@@ -156,7 +159,10 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      *
      * @return ilObjUser
      */
-    public function beforeUpdateUser(ilObjUser $user) {
+    public function beforeUpdateUser(ilObjUser $user)
+    {
+        $matching = $this->getMatching($user);
+        $matching->setUserAttributes();
         return $user;
     }
 
@@ -170,7 +176,6 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     {
         $matching = $this->getMatching($user);
         $matching->assingMatchingCourses();
-        $matching->updateUserAttributes();
         $this->checkDeepLink($user);
         return $user;
     }

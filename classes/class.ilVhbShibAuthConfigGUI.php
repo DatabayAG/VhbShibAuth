@@ -94,6 +94,12 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
                     $input->setSize(10);
                     $input->setValue($param->value);
                     break;
+                case ilVhbShibAuthParam::TYPE_SELECT:
+                    $input = new ilSelectInputGUI($title, $postvar);
+                    $input->setOptions($param->options);
+                    $input->setValue($param->value);
+                    break;
+
             }
             $input->setInfo($description);
             $form->addItem($input);

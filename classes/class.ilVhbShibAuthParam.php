@@ -17,6 +17,7 @@ class ilVhbShibAuthParam
     const TYPE_BOOLEAN = 'bool';
     const TYPE_INT = 'int';
 	const TYPE_FLOAT = 'float';
+	const TYPE_SELECT = 'select';
 
 
 	/**
@@ -46,6 +47,11 @@ class ilVhbShibAuthParam
 	 */
 	public $value;
 
+    /**
+     * @var array 		opptins for select values
+     */
+    public $options = [];
+
 
     /**
      * Create a parameter
@@ -55,9 +61,10 @@ class ilVhbShibAuthParam
      * @param string $a_description
      * @param string $a_type
 	 * @param mixed $a_value
+     * @param mixed $a_options
      * @return ilVhbShibAuthParam
      */
-    public static function _create($a_name, $a_title, $a_description, $a_type = self::TYPE_TEXT, $a_value = null)
+    public static function _create($a_name, $a_title, $a_description, $a_type = self::TYPE_TEXT, $a_value = null, $a_options = [])
     {
         $param = new self;
 		$param->name = $a_name;
@@ -65,6 +72,7 @@ class ilVhbShibAuthParam
 		$param->description = $a_description;
 		$param->type = $a_type;
 		$param->value = $a_value;
+		$param->options = $a_options;
 		
 		return $param;
     }

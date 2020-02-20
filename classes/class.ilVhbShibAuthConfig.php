@@ -35,15 +35,32 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_attrib',
             'Attribut Benutzerkennung',
-            'Dieses Shibboleth-Attribut wird auf das Suchmuster für lokale Benutzer überprüft.',
+            'Dieses Shibboleth-Attribut enthält die Benutzerkennung.',
             ilVhbShibAuthParam::TYPE_TEXT,
             'eduPersonPrincipalName'
         );
         $params[] = ilVhbShibAuthParam::_create(
-            'local_user_pattern',
-            'Suchmuster lokaler Benutzer',
-            'Wenn dieses Muster in dem entsprechenden Attribut gefunden wurde, handelt es sich um einen an der eigenen Hochschule authentifizierten Benutzer.'
+            'local_user_suffix',
+            'Suffix für lokaler Benutzer',
+            'Wenn die Benutzerkennung auf diesen Wert endet, handelt es sich um einen an der eigenen Hochschule authentifizierten Benutzer.'
         );
+
+        $params[] = ilVhbShibAuthParam::_create(
+            'local_user_take_login',
+            'Lokale Benutzerkennung übernehmen',
+            'Lokale Benutzer werden mit der Benutzerkennung (ohne Suffix) als Login-Name angelegt.',
+            ilVhbShibAuthParam::TYPE_BOOLEAN
+        );
+
+        $params[] = ilVhbShibAuthParam::_create(
+            'local_user_auth_mode',
+            'Authentifizierungsmodus für lokale Benutzer',
+            'Authentifizierungsmodus, der für lokale Benutzer gesetzt werden soll.',
+            ilVhbShibAuthParam::TYPE_SELECT,
+            4,
+            $this->getAuthModes()
+        );
+
         $params[] = ilVhbShibAuthParam::_create(
             'entitle_settings',
             'Kurszuweisungs-Einstellungen',
@@ -127,6 +144,7 @@ class ilVhbShibAuthConfig
            {
                switch($param->type)
                {
+                   case ilVhbShibAuthParam::TYPE_SELECT:
                    case ilVhbShibAuthParam::TYPE_TEXT:
                        $param->value = (string) $value;
                        break;
@@ -176,5 +194,40 @@ class ilVhbShibAuthConfig
                 array('param_value' => array('text', (string) $param->value))
             );
         }
+    }
+
+    /**
+     * Get a list of global roles as select options
+     * @return array
+     */
+    protected function getGlobalRoles() {
+        global $DIC;
+        $rbacreview = $DIC['rbacreview'];
+        $role_list = $rbacreview->getRolesByFilter(2);
+        foreach ($role_list as $data) {
+            $roles[$data["obj_id"]] = $data["title"];
+        }
+        return $roles;
+    }
+
+    /**
+     * Get a list of authentication modes
+     * @return array
+     */
+    protected function getAuthModes() {
+        global $DIC;
+        $lng = $DIC->language();
+
+        $active_auth_modes = ilAuthUtils::_getActiveAuthModes();
+        $option = array();
+        foreach ($active_auth_modes as $auth_name => $auth_key) {
+            if ($auth_name == 'default') {
+                $name = $lng->txt('auth_' . $auth_name) . " (" . $lng->txt('auth_' . ilAuthUtils::_getAuthModeName($auth_key)) . ")";
+            } else {
+                 $name = ilAuthUtils::getAuthModeTranslation($auth_key);
+            }
+            $option[$auth_name] = $name;
+        }
+        return $option;
     }
 }
