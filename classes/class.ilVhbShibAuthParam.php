@@ -1,11 +1,8 @@
 <?php
-// Copyright (c) 2018 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
+// Copyright (c) 2020 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 /**
- * Class ilVhbShibAuthParam
- *
- * @author Fred Neumann <fred.neumann@fau.de>
- *
+ * Configuration parameter
  */
 class ilVhbShibAuthParam
 {
@@ -30,12 +27,10 @@ class ilVhbShibAuthParam
      */
 	public $title;
 
-
     /**
      * @var string     description of the parameter
      */
     public $description;
-
 
     /**
 	 * @var string		type of the parameter
@@ -48,7 +43,7 @@ class ilVhbShibAuthParam
 	public $value;
 
     /**
-     * @var array 		opptins for select values
+     * @var array 		options for select values
      */
     public $options = [];
 

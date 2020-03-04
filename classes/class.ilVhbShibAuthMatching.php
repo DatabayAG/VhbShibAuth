@@ -1,15 +1,12 @@
 <?php
-// Copyright (c) 2018 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
+// Copyright (c) 2020 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 /**
- * Vhb Shibboleth Authentication Matching functions
- *
- * @author Fred Neumann <fred.neumann@fau.de>
- *
+ * Vhb Shibboleth authentication matching functions
  */
 class ilVhbShibAuthMatching
 {
-    /** @var ilDB $db */
+    /** @var ilDBInterface $db */
     protected $db;
 
     /** @var ilVhbShibAuthPlugin $plugin */
@@ -18,8 +15,8 @@ class ilVhbShibAuthMatching
     /** @var ilvhbShibAuthConfig */
     protected $config;
 
-    /** @var ilObjUser */
-    protected $user;
+    /** @var ilVhbShibAuthData */
+    protected $data;
 
     /**
      * list of relevant ILIAS courses
@@ -29,17 +26,28 @@ class ilVhbShibAuthMatching
 
 
     /**
-     * ilVhbShibAuthMatching constructor.
-     * @param $plugin
-     * @param $user
+     * Constructor
+     * @param ilVhbShibAuthPlugin $plugin
      */
-    public function __construct($plugin, $user)
+    public function __construct($plugin)
     {
         global $DIC;
         $this->db = $DIC->database();
         $this->plugin = $plugin;
-        $this->user = $user;
         $this->config = $this->plugin->getConfig();
+
+        $this->plugin->includeClass('class.ilVhbShibAuthData');
+        $this->data = ilVhbShibAuthData::getInstance()->configure($this->config);
+    }
+
+    /**
+     * Get a matching user object
+     * @return
+     */
+    public function getMatchedUser()
+    {
+        $this->plugin->includeClass('class.ilVhbShibAuthUser.php');
+        return ilVhbShibAuthUser::buildInstance($this->data)->configure($this->config);
     }
 
 
@@ -59,8 +67,9 @@ class ilVhbShibAuthMatching
 
     /**
      * Assign the ILIAS courses to the user that match the entitled vhb course
+     * @param ilObjUser $user
      */
-    public function assingMatchingCourses()
+    public function assingMatchingCourses($user)
     {
         foreach ($this->getEntitledVhbCourses() as $lvnr => $role)
         {
@@ -68,22 +77,22 @@ class ilVhbShibAuthMatching
             {
                 /** @var ilCourseParticipants $cp */
                 $cp = ilCourseParticipants::_getInstanceByObjId($data['obj_id']);
-                if (!$cp->isAssigned($this->user->getId()))
+                if (!$cp->isAssigned($user->getId()))
                 {
                     switch($role)
                     {
                         case 'student':
-                            $cp->add($this->user->getId(), IL_CRS_MEMBER);
+                            $cp->add($user->getId(), IL_CRS_MEMBER);
                             break;
 
                         case 'evaluation':
                             $pattern = $this->config->get('evaluator_role');
-                            $this->assignMatchingCourseRole($ref_id, $pattern);
+                            $this->assignMatchingCourseRole($user->getId(), $ref_id, $pattern);
                             break;
 
                         case 'appr':
                             $pattern = $this->config->get('guest_role');
-                            $this->assignMatchingCourseRole($ref_id, $pattern);
+                            $this->assignMatchingCourseRole($user->getId(), $ref_id, $pattern);
                             break;
                     }
                 }
@@ -91,73 +100,14 @@ class ilVhbShibAuthMatching
         }
     }
 
-    /**
-     * Apply specific attributes coming from the vhb
-     */
-    public function setUserAttributes()
-    {
-        if ($this->isLocalUser())
-        {
-            $attrib = $_SERVER[$this->config->get('local_user_attrib')];
-            $suffix = $this->config->get('local_user_suffix');
-
-            if ($this->user->isNew() && $this->config->get('local_user_take_login'))
-            {
-                $login = substr($attrib, 0, strpos($attrib, $suffix));
-                $appendix = null;
-                $login_tmp = $login;
-                while ($this->loginExists($login)) {
-                    $login = $login_tmp . $appendix;
-                    $appendix++;
-                }
-                $this->user->setLogin($login);
-            }
-
-            if ($this->config->get('local_user_auth_mode')) {
-                $this->user->setAuthMode($this->config->get('local_user_auth_mode'));
-            }
-        }
-
-        switch ($_SERVER['schacGender']) {
-            case '0':
-                $gender = 'n';
-                break;
-            case '1':
-                $gender = 'm';
-                break;
-            case '2':
-                $gender = 'f';
-                break;
-            default:
-                $gender = 'n';
-        }
-
-        $this->user->setGender($gender);
-    }
-
-
-    /**
-     * Check if the user is a local user
-     * @return bool
-     */
-    protected function isLocalUser()
-    {
-        $attrib = $_SERVER[$this->config->get('local_user_attrib')];
-        $suffix = $this->config->get('local_user_suffix');
-
-        if (!empty($attrib) && !empty($suffix) && strpos($attrib, $suffix) > 0) {
-            return true;
-        }
-        return false;
-    }
-
 
     /**
      * Assign the course role that matches the configured pattern for the vhb role
+     * @param int $usr_id
      * @param int $ref_id
      * @param string $pattern
      */
-    protected function assignMatchingCourseRole($ref_id, $pattern)
+    protected function assignMatchingCourseRole($usr_id, $ref_id, $pattern)
     {
         global $DIC;
         $rbacreview = $DIC->rbac()->review();
@@ -168,7 +118,7 @@ class ilVhbShibAuthMatching
             $title = ilObjRole::_lookupTitle($rol_id);
             if (fnmatch($pattern, $title))
             {
-                $rbacadmin->assignUser($rol_id, $this->user->getId());
+                $rbacadmin->assignUser($rol_id, $usr_id);
                 break;
             }
         }
@@ -262,22 +212,18 @@ class ilVhbShibAuthMatching
     }
 
     /**
-     * @param $login
-     * @param $usr_id
-     *
-     * @return bool
+     * Print a data dump and exit
      */
-    protected function loginExists($login)
+    public function dumpData()
     {
-        global $DIC;
-        $ilDB = $DIC->database();
-
-        $query = 'SELECT usr_id FROM usr_data WHERE login = ' . $ilDB->quote($login, 'text');
-        $res = $ilDB->query($query);
-        if ($row = $ilDB->fetchAssoc($res)) {
-            return true;
-        }
-        return false;
+        echo '<pre>';
+        echo 'Analyzed Server Data:';
+        var_dump((array) $this->data);
+        echo '';
+        echo 'Raw Server Data:';
+        var_dump((array) $_SERVER);
+        echo '</pre>';
+        exit;
     }
 
 }

@@ -1,24 +1,26 @@
 <?php
-// Copyright (c) 2018 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
+// Copyright (c) 2020 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 /**
  * Vhb Shibboleth Authentication plugin config class
- *
- * @author Fred Neumann <fred.neumann@fau.de>
- *
  */
 class ilVhbShibAuthConfig
 {
+    /**
+     * @var ilVhbShibAuthPlugin
+     */
+    protected $plugin;
+
 	/**
-	 * @var ilVhbShibAuthParam[]	$params		parameters: 	name => ilVhbShibAuthParam
+	 * @var ilVhbShibAuthParam[]  name => ilVhbShibAuthParam
 	 */
 	protected $params = array();
 
 	/**
 	 * Constructor.
-	 * @param ilPlugin|string $a_plugin_object
+	 * @param ilVhbShibAuthPlugin $a_plugin_object
 	 */
-	public function __construct($a_plugin_object = "")
+	public function __construct($a_plugin_object)
 	{
 		$this->plugin = $a_plugin_object;
 		$this->plugin->includeClass('class.ilVhbShibAuthParam.php');
@@ -43,12 +45,20 @@ class ilVhbShibAuthConfig
             'local_user_suffix',
             'Suffix für lokaler Benutzer',
             'Wenn die Benutzerkennung auf diesen Wert endet, handelt es sich um einen an der eigenen Hochschule authentifizierten Benutzer.'
+            . 'Die Benutzerkennung wird in der Shiboleth-Konfiguration als "Eindeutiges Shibboleth Attribut" konfiguriert, in der Regel "eduPersonPrincipalName".'
         );
 
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_take_login',
             'Lokale Benutzerkennung übernehmen',
-            'Lokale Benutzer werden mit der Benutzerkennung (ohne Suffix) als Login-Name angelegt.',
+            'Lokale Benutzer sollen mit der Benutzerkennung ohne Suffix als Login-Name angelegt werden. Im Standard wird ein Login-Name generiert.',
+            ilVhbShibAuthParam::TYPE_BOOLEAN
+        );
+
+        $params[] = ilVhbShibAuthParam::_create(
+            'local_user_short_external',
+            'Kurzes externes Konto',
+            'Bei lokalen Benutzern soll die Benutzerkennung ohne Suffix als externes Konto eingetragen werden. Im Standard wird sie komplett eingetragen.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
 
@@ -86,10 +96,23 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'guest_role',
             'Gastrolle',
-            'Suchmuster für Namen der ILIAS-Kursrolle, die Gästen zugewiesen werden soll. Evaluatoren haben im Shibboleth-Attribut "eduPersonEntitlement" die Nutzerrolle "appr". Sie sollen im ILIAS-Kurs eine entsprechende Kursrolle bekommen. Mit dem Suchmuster wird in den Titeln aller Rollen des gefundenen Kurses nach der Gast-Rolle gesucht. Das Muster kann "?" oder "*" als Platzhalter für einzelne oder beliebig viele Zeichen enthalten.',
+            'Suchmuster für Namen der ILIAS-Kursrolle, die Gästen zugewiesen werden soll. Gäste haben im Shibboleth-Attribut "eduPersonEntitlement" die Nutzerrolle "appr". Sie sollen im ILIAS-Kurs eine entsprechende Kursrolle bekommen. Mit dem Suchmuster wird in den Titeln aller Rollen des gefundenen Kurses nach der Gast-Rolle gesucht. Das Muster kann "?" oder "*" als Platzhalter für einzelne oder beliebig viele Zeichen enthalten.',
             ilVhbShibAuthParam::TYPE_TEXT,
             'Kursgast*'
         );
+        $params[] = ilVhbShibAuthParam::_create(
+            'debugging_settings',
+            'Debugging-Einstellungen',
+            '',
+            ilVhbShibAuthParam::TYPE_HEAD
+        );
+        $params[] = ilVhbShibAuthParam::_create(
+            'show_server_data',
+            'Zeige Serverdaten',
+            'Gebe die Apache-Serverdaten aus',
+            ilVhbShibAuthParam::TYPE_BOOLEAN
+        );
+
 
         foreach ($params as $param)
         {

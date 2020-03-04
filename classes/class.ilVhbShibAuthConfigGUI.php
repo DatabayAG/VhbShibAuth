@@ -1,10 +1,8 @@
 <?php
-// Copyright (c) 2018 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
+// Copyright (c) 2020 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 /**
  * vhb Shibboleth Authentication configuration user interface class
- *
- * @author Fred Neumann <fred.neumann@fau.de>
  */
 class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
 {
@@ -14,8 +12,14 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
 	/** @var ilVhbShibAuthConfig $config */
 	protected $config;
 
+    /** @var ilLanguage */
 	protected $lng;
 
+	/** @var ilTemplate */
+    protected $tpl;
+
+    /** @var ilCtrl */
+    protected $ctrl;
 
     /**
 	 * Handles all commands, default is "configure"
@@ -28,7 +32,8 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
         $this->plugin = $this->getPluginObject();
         $this->config = $this->plugin->getConfig();
         $this->lng = $DIC->language();
-
+        $this->tpl = $DIC['tpl'];
+        $this->ctrl =$DIC->ctrl();
 
 		switch ($cmd)
 		{
@@ -44,9 +49,8 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
 	 */
 	protected function configure()
 	{
-		global $tpl;
 		$form = $this->initConfigurationForm();
-		$tpl->setContent($form->getHTML());
+		$this->tpl->setContent($form->getHTML());
 	}
 
 
@@ -56,11 +60,9 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
 	 */
 	protected function initConfigurationForm()
 	{
-		global $ilCtrl, $lng;
-
 		require_once("./Services/Form/classes/class.ilPropertyFormGUI.php");
 		$form = new ilPropertyFormGUI();
-		$form->setFormAction($ilCtrl->getFormAction($this));
+		$form->setFormAction($this->ctrl->getFormAction($this));
 
         foreach ($this->config->getParams() as $name => $param)
         {
@@ -106,7 +108,7 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
         }
 
 
-		$form->addCommandButton("saveSettings", $lng->txt("save"));
+		$form->addCommandButton("saveSettings", $this->lng->txt("save"));
 		return $form;
 	}
 
@@ -115,8 +117,6 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
 	 */
 	protected function saveSettings()
 	{
-		global $tpl, $ilCtrl;
-
 		$form = $this->initConfigurationForm();
 		if ($form->checkInput())
 		{
@@ -127,14 +127,12 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
             $this->config->write();
 
 			ilUtil::sendSuccess($this->lng->txt("settings_saved"), true);
-			$ilCtrl->redirect($this, 'configure');
+			$this->ctrl->redirect($this, 'configure');
 		}
 		else
 		{
 			$form->setValuesByPost();
-			$tpl->setContent($form->getHtml());
+			$this->tpl->setContent($form->getHtml());
 		}
 	}
 }
-
-?>

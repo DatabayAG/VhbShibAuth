@@ -1,20 +1,10 @@
 <?php
-// Copyright (c) 2018 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
+// Copyright (c) 2020 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 /**
  * Plugin definition
- *
- * @author  Fred Neumann <fred.neumann@fau.de>
- *
- * @ingroup ServicesAuthShibboleth
  */
 class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements ilShibbolethAuthenticationPluginInt {
-
-    /**
-     * @var array
-     */
-    protected $active_plugins = array();
-
 
     /**
      * @var ilVhbShibAuthConfig
@@ -29,10 +19,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     /**
      * Get Plugin Name. Must be same as in class name il<Name>Plugin
      * and must correspond to plugins subdirectory name.
-     *
-     * Must be overwritten in plugin class of plugin
-     *
-     * @return	string	Plugin Name
+     * @return	string
      */
     public function getPluginName()
     {
@@ -56,37 +43,93 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
 
 
     /**
-     * Get the class for doing matchings
-     * @param ilObjUser
+     * Get the class for doing user and course matchings
      * @return ilVhbShibAuthMatching
      */
-    public function getMatching($user)
+    public function getMatching()
     {
-        if (!isset($this->matching))
-        {
+        if (!isset($this->matching)) {
             $this->includeClass('class.ilVhbShibAuthMatching.php');
-            $this->matching = new ilVhbShibAuthMatching($this, $user);
+            $this->matching = new ilVhbShibAuthMatching($this);
+        }
+
+        if ($this->config->get('show_server_data')) {
+            $this->matching->dumpData();
         }
         return $this->matching;
     }
 
     /**
      * Redirect after login when deep link is given
-     * @param $user
      */
-    protected function checkDeepLink($user)
+    protected function checkDeepLink()
     {
         if (isset($_GET['id']) && !isset($_GET['target']))
         {
-            if ($ref_id = $this->getMatching($user)->getTargetCourseRefId($_GET['id']))
+            if ($ref_id = $this->getMatching()->getTargetCourseRefId($_GET['id']))
             {
                 $_GET['target'] = 'crs_'. $ref_id;
             }
         }
     }
 
+
     /**
-     * Not called by shib authentication!
+     * Hook from shibboleth authentication before the user object is created
+     * Ignore the prepared user from the default matching conditions
+     * Return an own user object for the vhb matching conditions
+     * @param ilObjUser $user
+     * @return ilVhbShibAuthUser
+     */
+    public function beforeCreateUser(ilObjUser $user)
+    {
+        return $this->getMatching()->getMatchedUser();
+    }
+
+    /**
+     * Hook from Shibboleth authentication before the user object is updated
+     * Ignore the prepared user from the default matching conditions
+     * Return an own user object for the vhb matching conditions
+     * @param ilObjUser $user
+     * @return ilObjUser
+     */
+    public function beforeUpdateUser(ilObjUser $user)
+    {
+        return $this->getMatching()->getMatchedUser();
+    }
+
+
+    /**
+     * Hook from Shibboleth authentication after the user object is created
+     * Assigns the courses and prepares the redirection for deep links
+     * @param ilObjUser $user
+     * @return ilObjUser
+     */
+    public function afterCreateUser(ilObjUser $user)
+    {
+        $this->getMatching()->assingMatchingCourses($user);
+        $this->checkDeepLink();
+        return $user;
+    }
+
+
+
+    /**
+     * Hook from Shibboleth authentication after the user object is updated
+     * Assigns the courses and prepares the redirection for deep links
+     * @param ilObjUser $user
+     * @return ilObjUser
+     */
+    public function afterUpdateUser(ilObjUser $user)
+    {
+        $this->getMatching()->assingMatchingCourses($user);
+        $this->checkDeepLink();
+        return $user;
+    }
+
+
+    /**
+     * Not called by shibboleth authentication!
      * @param ilObjUser $user
      * @return ilObjUser
      */
@@ -97,7 +140,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
 
 
     /**
-     * Not called by shib authentication!
+     * Not called by shibboleth authentication!
      * @param ilObjUser $user
      * @return ilObjUser
      */
@@ -105,92 +148,21 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
         return $user;
     }
 
-
     /**
-     *
+     * Not called by shibboleth authentication!
      * @param ilObjUser $user
-     * @return ilObjUser
-     */
-    public function beforeCreateUser(ilObjUser $user)
-    {
-        $matching = $this->getMatching($user);
-        $matching->setUserAttributes();
-
-        return $user;
-    }
-
-
-    /**
-     * @param ilObjUser $user
-     *
-     * @return ilObjUser
-     */
-    public function afterCreateUser(ilObjUser $user)
-    {
-        $matching = $this->getMatching($user);
-        $matching->assingMatchingCourses();
-        $this->checkDeepLink($user);
-        return $user;
-    }
-
-
-    /**
-     * @param ilObjUser $user
-     *
      * @return ilObjUser
      */
     public function beforeLogout(ilObjUser $user) {
         return $user;
     }
 
-
     /**
+     * Not called by shibboleth authentication!
      * @param ilObjUser $user
-     *
      * @return ilObjUser
      */
     public function afterLogout(ilObjUser $user) {
         return $user;
     }
-
-
-    /**
-     * @param ilObjUser $user
-     *
-     * @return ilObjUser
-     */
-    public function beforeUpdateUser(ilObjUser $user)
-    {
-        $matching = $this->getMatching($user);
-        $matching->setUserAttributes();
-        return $user;
-    }
-
-
-    /**
-     * @param ilObjUser $user
-     *
-     * @return ilObjUser
-     */
-    public function afterUpdateUser(ilObjUser $user)
-    {
-        $matching = $this->getMatching($user);
-        $matching->assingMatchingCourses();
-        $this->checkDeepLink($user);
-        return $user;
-    }
-
-
-    /**
-     * Dump the server variables
-     */
-    public function dump()
-    {
-        echo '<pre>';
-        var_dump($_SERVER);
-        echo '</pre>';
-        exit;
-    }
 }
-
-?>
