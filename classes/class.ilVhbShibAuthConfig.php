@@ -35,30 +35,25 @@ class ilVhbShibAuthConfig
             ilVhbShibAuthParam::TYPE_HEAD
         );
         $params[] = ilVhbShibAuthParam::_create(
-            'local_user_attrib',
-            'Attribut Benutzerkennung',
-            'Dieses Shibboleth-Attribut enthält die Benutzerkennung.',
-            ilVhbShibAuthParam::TYPE_TEXT,
-            'eduPersonPrincipalName'
-        );
-        $params[] = ilVhbShibAuthParam::_create(
             'local_user_suffix',
             'Suffix für lokaler Benutzer',
-            'Wenn die Benutzerkennung auf diesen Wert endet, handelt es sich um einen an der eigenen Hochschule authentifizierten Benutzer.'
-            . 'Die Benutzerkennung wird in der Shiboleth-Konfiguration als "Eindeutiges Shibboleth Attribut" konfiguriert, in der Regel "eduPersonPrincipalName".'
+            'Von der Vhb wir eine Benutzerkennung in der Form "kennung@hochschule.domain" übermittelt. "@hochschule.domain" ist dass Suffix für den Identity Provider zu dem die Kennung gehört.'
+            . 'Tragen Sie hier das Suffix inklusive @-Zeichen ein, das zu Ihrer Hochschule gehört. Anhand dessen erkennt die Schnittstelle, dass es sich um einen lokalen Benutzer Ihrer Hochschule handelt.'
+            . '<br />Das Shibboleth-Attribut, das die Benutzerkennung enthält, wird in den Shibboleth-Einstellungen von ILIAS als "Eindeutiges Shibboleth Attribut" konfiguriert, in der Regel ist es "eduPersonPrincipalName"'
         );
 
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_take_login',
-            'Lokale Benutzerkennung übernehmen',
-            'Lokale Benutzer sollen mit der Benutzerkennung ohne Suffix als Login-Name angelegt werden. Im Standard wird ein Login-Name generiert.',
+            'Kennung als Login für lokale Benutzer',
+            'Lokale Benutzer sollen mit der Kennung ohne Suffix als Login-Name angelegt werden. Im Standard und bei externen Benutzern wird ein Login-Name generiert.'
+            . '<br />Die Kennung entspricht bei lokalen Benutzern der Benutzerkennung aus dem eigenen Identity Provider, bei übrigen einer Nummer der Form "123457X25" mit Suffix "@vhb.org"',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
 
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_short_external',
-            'Kurzes externes Konto',
-            'Bei lokalen Benutzern soll die Benutzerkennung ohne Suffix als externes Konto eingetragen werden. Im Standard wird sie komplett eingetragen.',
+            'Kurze externe Kennung für lokale Benutzer',
+            'Bei lokalen Benutzern soll die Kennung ohne Suffix als "Externes Benutzerkonto" eingetragen werden. Im Standard und bei externe Benutzer wird sie komplett eingetragen.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
 
@@ -109,7 +104,7 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'show_server_data',
             'Zeige Serverdaten',
-            'Gebe die Apache-Serverdaten aus',
+            'Gibt die übermittelten Daten aus und beendet die Verarbeitung.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
 

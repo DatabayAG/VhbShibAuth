@@ -104,4 +104,17 @@ class ilVhbShibAuthData extends shibServerData
                 return 'n';
         }
     }
+
+    /**
+     * Get the pure data for a dump
+     */
+    public function getData() {
+        $data = [];
+        foreach (array_keys(get_class_vars('shibConfig')) as $field) {
+            if (substr($field,0, 7)!= 'update_') {
+                $data[$field] = $this->{$field};
+            }
+        }
+        return $data;
+    }
 }

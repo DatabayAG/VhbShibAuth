@@ -36,7 +36,7 @@ class ilVhbShibAuthMatching
         $this->plugin = $plugin;
         $this->config = $this->plugin->getConfig();
 
-        $this->plugin->includeClass('class.ilVhbShibAuthData');
+        $this->plugin->includeClass('class.ilVhbShibAuthData.php');
         $this->data = ilVhbShibAuthData::getInstance()->configure($this->config);
     }
 
@@ -217,11 +217,11 @@ class ilVhbShibAuthMatching
     public function dumpData()
     {
         echo '<pre>';
-        echo 'Analyzed Server Data:';
-        var_dump((array) $this->data);
+        echo 'Extracted Shibboleth Data: ';
+        print_r($this->data->getData());
         echo '';
-        echo 'Raw Server Data:';
-        var_dump((array) $_SERVER);
+        echo 'Raw Server Data: ';
+        print_r((array) $_SERVER);
         echo '</pre>';
         exit;
     }
