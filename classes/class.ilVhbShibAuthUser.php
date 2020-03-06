@@ -206,7 +206,7 @@ class ilVhbShibAuthUser extends shibUser
      */
     protected function returnNewAuthMode()
     {
-        if ($this->config->get('local_user_auth_mode')) {
+        if ($this->shibServerData->isLocalUser() && $this->config->get('local_user_auth_mode')) {
             return $this->config->get('local_user_auth_mode');
         }
         else {
