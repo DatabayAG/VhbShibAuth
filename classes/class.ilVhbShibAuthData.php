@@ -106,6 +106,23 @@ class ilVhbShibAuthData extends shibServerData
     }
 
     /**
+     * Get the matriculation number
+     * @return string
+     */
+    public function getMatriculation()
+    {
+        if (!$this->isLocalUser() && $this->config->get('external_user_matrikulation')) {
+            $login = $this->getLogin();
+            $suffix = '@vhb.org';
+            if (!empty($login) && !empty($suffix) && strpos($login, $suffix) > 0) {
+                return substr($login, 0,strpos($login, $suffix));
+            }
+        }
+
+        return parent::getMatriculation();
+    }
+
+    /**
      * Get the pure data for a dump
      */
     public function getData() {

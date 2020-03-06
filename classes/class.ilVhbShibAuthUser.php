@@ -76,6 +76,8 @@ class ilVhbShibAuthUser extends shibUser
         $this->setLogin($this->returnNewLoginName());
         $this->setExternalAccount($this->returnNewExtAccount());
         $this->setAuthMode($this->returnNewAuthMode());
+
+        $this->setMatriculation($this->shibServerData->getMatriculation());
     }
 
     /**
@@ -176,9 +178,11 @@ class ilVhbShibAuthUser extends shibUser
         if ($this->shibServerData->isLocalUser() && $this->config->get('local_user_take_login')) {
             return $this->getUniqueLoginName($this->shibServerData->getLocalUserName());
         }
-        else  {
-            return parent::returnNewLoginName();
+        if (!$this->shibServerData->isLocalUser() && $this->config->get('external_user_take_login')) {
+            return $this->getUniqueLoginName($this->shibServerData->getLogin());
         }
+
+        return parent::returnNewLoginName();
     }
 
     /**
@@ -192,9 +196,8 @@ class ilVhbShibAuthUser extends shibUser
         if ($this->shibServerData->isLocalUser() && $this->config->get('local_user_short_external')) {
             return $this->shibServerData->getLocalUserName();
         }
-        else  {
-            return $this->shibServerData->getLogin();
-        }
+
+        return $this->shibServerData->getLogin();
     }
 
     /**

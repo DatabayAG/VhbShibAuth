@@ -36,31 +36,48 @@ class ilVhbShibAuthConfig
         );
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_suffix',
-            'Suffix für lokaler Benutzer',
-            'Von der Vhb wir eine Benutzerkennung in der Form "kennung@hochschule.domain" übermittelt. "@hochschule.domain" ist dass Suffix für den Identity Provider zu dem die Kennung gehört.'
+            'Suffix bei lokalen Benutzern',
+            'Von Shibbloeth wird eine Benutzerkennung in der Form "kennung@hochschule.domain" übermittelt. "@hochschule.domain" ist das Suffix für den Identity Provider, zu dem die Kennung gehört.'
             . 'Tragen Sie hier das Suffix inklusive @-Zeichen ein, das zu Ihrer Hochschule gehört. Anhand dessen erkennt die Schnittstelle, dass es sich um einen lokalen Benutzer Ihrer Hochschule handelt.'
             . '<br />Das Shibboleth-Attribut, das die Benutzerkennung enthält, wird in den Shibboleth-Einstellungen von ILIAS als "Eindeutiges Shibboleth Attribut" konfiguriert, in der Regel ist es "eduPersonPrincipalName"'
         );
 
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_take_login',
-            'Kennung als Login für lokale Benutzer',
-            'Lokale Benutzer sollen mit der Kennung ohne Suffix als Login-Name angelegt werden. Im Standard und bei externen Benutzern wird ein Login-Name generiert.'
-            . '<br />Die Kennung entspricht bei lokalen Benutzern der Benutzerkennung aus dem eigenen Identity Provider, bei übrigen einer Nummer der Form "123457X25" mit Suffix "@vhb.org"',
+            'Kurzes Kennung als Login für lokale Benutzer',
+            'Lokale Benutzer sollen mit der Kennung ohne Suffix als Login-Name angelegt werden. Im Standard wird ein Login-Name generiert.'
+            . '<br />Die Kennung entspricht bei lokalen Benutzern der Benutzerkennung aus dem eigenen Identity Provider.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
 
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_short_external',
-            'Kurze externe Kennung für lokale Benutzer',
-            'Bei lokalen Benutzern soll die Kennung ohne Suffix als "Externes Benutzerkonto" eingetragen werden. Im Standard und bei externe Benutzer wird sie komplett eingetragen.',
+            'Kurze Kennung als Externes Benutzerkonto für lokale Benutzer',
+            'Bei lokalen Benutzern soll die Kennung ohne Suffix als "Externes Benutzerkonto" eingetragen werden. Im Standard und bei externen Benutzern wird sie komplett eingetragen.',
+            ilVhbShibAuthParam::TYPE_BOOLEAN
+        );
+
+        $params[] = ilVhbShibAuthParam::_create(
+            'external_user_take_login',
+            'Lange vhb-Kennung als Login für externe Benutzer',
+            'Externe Benutzer sollen mit der kompletten vhb-Benutzerkenung als Login-Name angelegt werden. Im Standard wird ein Login-Name generiert.'
+            . '<br />Die vhb-Benutzerkennung hat die Form "123457X25@vhb.org".',
+            ilVhbShibAuthParam::TYPE_BOOLEAN
+        );
+
+        $params[] = ilVhbShibAuthParam::_create(
+            'external_user_matrikulation',
+            'Kurze vhb-Kennung als Matrikelnummer für externe Benutzer',
+            'Für externe Benutzer wird die kurze vhb-Kennung ohne Suffix, also z.B. "123457X25" als Matrikelnummer eingetragen.'
+            . '<br />Das entspricht dem Verfahren der alten vhb-Schnitstelle.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
 
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_auth_mode',
             'Authentifizierungsmodus für lokale Benutzer',
-            'Authentifizierungsmodus, der für lokale Benutzer gesetzt werden soll.',
+            'Authentifizierungsmodus, der für lokale Benutzer gesetzt werden soll.'
+            . '<br />Bei externen Benutzern wid immer "Shibboleth" eigetragen.',
             ilVhbShibAuthParam::TYPE_SELECT,
             4,
             $this->getAuthModes()
