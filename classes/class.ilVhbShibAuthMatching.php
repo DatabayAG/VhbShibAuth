@@ -255,14 +255,16 @@ class ilVhbShibAuthMatching
             // find vhb course by catalog
             $query = "SELECT o.obj_id, o.title, o.description, m.entry FROM il_meta_identifier m " .
                 " INNER JOIN object_data o ON m.obj_id = o.obj_id " .
+                " INNER JOIN crs_settings s ON s.obj_id = o.obj_id " .
                 " WHERE m.obj_type = 'crs'" .
-                " AND m.catalog = 'vhb'";
+                " AND m.catalog = 'vhb'" .
+                " AND s.activation_type > 0";
             $result = $this->db->query($query);
 
             $this->courses = array();
             while ($row = $this->db->fetchAssoc($result)) {
                 if (ilObject::_hasUntrashedReference($row["obj_id"])) {
-                    if (ilObjCourseAccess::_isActivated($row["obj_id"])) {
+                    if (!ilObjCourseAccess::_isOffline($row["obj_id"])) {
                         foreach (ilObject::_getAllReferences($row["obj_id"]) as $ref_id) {
                             if (!isset($courses[$ref_id])) {
                                 $this->courses[$ref_id] = array(

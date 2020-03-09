@@ -71,7 +71,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     {
         global $DIC;
 
-        if ($this->getMatching()->getCoursesToSelect()) {
+        if (!empty($this->getMatching()->getCoursesToSelect())) {
             $this->getMatching()->saveCoursesToSelect();
 
             if (isset($_GET['id'])) {
