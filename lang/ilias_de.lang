@@ -1,7 +1,13 @@
 //
-// Copyright (c) 2018 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
+// Copyright (c) 2020 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 //
 // German Language File for the VhbShibAuth plugin
 //
 
 <!-- language file start -->
+course_selection#:#Kursauswahl
+course_selection_welcome#:#Willkommen bei der Lernplattform
+course_selection_info#:#Für eine oder mehrere Ihrer vhb-Kursbuchungen wurden in der Plattform verschiedene Durchgänge gefunden.<br />Bitte wählen Sie jeweils einen Durchgang aus. In der Folge müssen Sie die Auswahl dann nicht mehr treffen.
+course_selection_for#:#Für Buchung %s
+course_selection_no_description#:#Ohne Beschreibung
+continue#:#Weiter

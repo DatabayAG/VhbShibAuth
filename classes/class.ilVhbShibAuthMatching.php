@@ -24,6 +24,11 @@ class ilVhbShibAuthMatching
      */
     protected $courses;
 
+    /**
+     * List of courses that have to be selected
+     * @var array lvnr => ref_ids[]
+     */
+    protected $coursesToSelect = [];
 
     /**
      * Constructor
@@ -50,56 +55,121 @@ class ilVhbShibAuthMatching
         return ilVhbShibAuthUser::buildInstance($this->data)->configure($this->config);
     }
 
+    /**
+     * Get the list of courses that need a selection
+     * @return array $lvnr => ref_ids
+     */
+    public function getCoursesToSelect()
+    {
+        return $this->coursesToSelect;
+    }
+
+    /**
+     * Save the list of courses that need a selection
+     */
+    public function saveCoursesToSelect()
+    {
+        $_SESSION['ilVhbShibAuth']['coursesToSelect'] = $this->coursesToSelect;
+    }
+
+    /**
+     * Load the list of courses that need a selection
+     */
+    public function loadCoursesToSelect()
+    {
+        $this->coursesToSelect = (array)  $_SESSION['ilVhbShibAuth']['coursesToSelect'];
+    }
 
     /**
      * Get the ref_id of a target course
+     * @param ilObjUser $user
      * @param string $lvnr
      * @return int
      */
-    public function getTargetCourseRefId($lvnr)
+    public function getTargetCourseRefId($user, $lvnr)
     {
-        foreach ($this->findMatchingIliasCourses($lvnr) as $ref_id => $data)
-        {
-            return $ref_id;
-        }
+        $ref_ids = array_keys($this->findMatchingIliasCourses($lvnr));
+        return $this->getParticipationRefId($user->getId(), $ref_ids);
     }
 
 
     /**
      * Assign the ILIAS courses to the user that match the entitled vhb course
+     * Remember courses that need a selection by students because more match an entitlement
+     *
      * @param ilObjUser $user
      */
     public function assingMatchingCourses($user)
     {
+        $this->coursesToSelect = [];
+
         foreach ($this->getEntitledVhbCourses() as $lvnr => $role)
         {
-            foreach ($this->findMatchingIliasCourses($lvnr) as $ref_id => $data)
-            {
-                /** @var ilCourseParticipants $cp */
-                $cp = ilCourseParticipants::_getInstanceByObjId($data['obj_id']);
-                if (!$cp->isAssigned($user->getId()))
-                {
-                    switch($role)
-                    {
-                        case 'student':
-                            $cp->add($user->getId(), IL_CRS_MEMBER);
-                            break;
+            $course_refs = array_keys($this->findMatchingIliasCourses($lvnr));
 
-                        case 'evaluation':
-                            $pattern = $this->config->get('evaluator_role');
-                            $this->assignMatchingCourseRole($user->getId(), $ref_id, $pattern);
-                            break;
-
-                        case 'appr':
-                            $pattern = $this->config->get('guest_role');
-                            $this->assignMatchingCourseRole($user->getId(), $ref_id, $pattern);
-                            break;
-                    }
+            // more courses found
+            // students should get a course selection
+            if (count($course_refs) > 1 && $role == 'student') {
+                if (!$this->getParticipationRefId($user->getId(), $course_refs)) {
+                    $this->coursesToSelect[$lvnr] = $course_refs;
                 }
+                continue;
+            }
+
+            foreach ($course_refs as $ref_id)
+            {
+                $this->assignCourse($user->getId(), $ref_id, $role);
             }
         }
     }
 
+    /**
+     * Chose the first found ref_id of a course in which the user already participates
+     * @param int $user_id
+     * @param int[] $ref_ids
+     * @return int
+     */
+    public function getParticipationRefId($user_id, $ref_ids=[])
+    {
+        foreach ($ref_ids as $ref_id) {
+            if (ilParticipants::_isParticipant($ref_id, $user_id)) {
+                return $ref_id;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Assign a course to a user
+     * @param int $user_id
+     * @param int $ref_id
+     * @param string $role role as given by shibboleth
+     */
+    public function assignCourse($user_id, $ref_id, $role = 'student')
+    {
+        /** @var ilCourseParticipants $cp */
+        $obj_id = ilObject::_lookupObjId($ref_id);
+        $cp = ilCourseParticipants::_getInstanceByObjId($obj_id);
+        if (!$cp->isAssigned($user_id))
+        {
+            switch($role)
+            {
+                case 'student':
+                    $cp->add($user_id, IL_CRS_MEMBER);
+                    break;
+
+                case 'evaluation':
+                    $pattern = $this->config->get('evaluator_role');
+                    $this->assignMatchingCourseRole($user_id, $ref_id, $pattern);
+                    break;
+
+                case 'appr':
+                    $pattern = $this->config->get('guest_role');
+                    $this->assignMatchingCourseRole($user_id, $ref_id, $pattern);
+                    break;
+            }
+        }
+    }
 
     /**
      * Assign the course role that matches the configured pattern for the vhb role
@@ -154,9 +224,9 @@ class ilVhbShibAuthMatching
     /**
      * Find ILIAS courses that match a certain LV number
      * @param string $lvnr
-     * @return array    ref_id => ['obj_id' => int, 'title' => int, 'lv_patterns' => [string, string, ...], ...]
+     * @return array    ref_id => ['obj_id' => int, 'title' => string, 'description' => string, 'lv_patterns' => [string, string, ...], ...]
      */
-    protected function findMatchingIliasCourses($lvnr)
+    public function findMatchingIliasCourses($lvnr)
     {
         $courses = array();
         foreach ($this->findRelevantIliasCourses() as $ref_id => $data)
@@ -177,13 +247,13 @@ class ilVhbShibAuthMatching
 
     /**
      * Find active ILIAS courses with an LV pattern in their meta data
-     * @return array   ref_id => ['obj_id' => int, 'title' => int, 'lv_patterns' => [string, string, ...], ...]
+     * @return array   ref_id => ['obj_id' => int, 'title' => string, 'description' => string, 'lv_patterns' => [string, string, ...], ...]
      */
     protected function findRelevantIliasCourses()
     {
         if (!isset($this->courses)) {
             // find vhb course by catalog
-            $query = "SELECT o.obj_id, o.title, m.entry FROM il_meta_identifier m " .
+            $query = "SELECT o.obj_id, o.title, o.description, m.entry FROM il_meta_identifier m " .
                 " INNER JOIN object_data o ON m.obj_id = o.obj_id " .
                 " WHERE m.obj_type = 'crs'" .
                 " AND m.catalog = 'vhb'";
@@ -198,6 +268,7 @@ class ilVhbShibAuthMatching
                                 $this->courses[$ref_id] = array(
                                     'obj_id' => $row["obj_id"],
                                     'title' => $row['title'],
+                                    'description' => $row['description'],
                                     'lv_patterns' => array()
                                 );
                             }
@@ -223,7 +294,6 @@ class ilVhbShibAuthMatching
         echo 'Raw Server Data: ';
         print_r((array) $_SERVER);
         echo '</pre>';
-        exit;
     }
 
 }

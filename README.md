@@ -74,6 +74,12 @@ Alias /__vhb__                  /srv/www/vhosts/demo/htdocs/shib_login.php
         RedirectMatch "/__vhb__/goto.php(.*)"  "https://www.demo.odl.org/goto.php$1"
         RedirectMatch "/__vhb__/ilias.php(.*)"  "https://www.demo.odl.org/ilias.php$1"
         RedirectMatch "/__vhb__/error.php(.*)"  "https://www.demo.odl.org/error.php$1"
+
+        # Spezialfall: Weiterleitung zur Kursauswahl, wenn menrere Kurse passen
+        RewriteEngine On
+        RewriteCond %{QUERY_STRING} ^target=ilias.php(.*)$
+        RewriteRule  .*/goto.php  https://www.demo.odl.org.de/ilias.php%1  [L]
+
 </LocationMatch>
 ```
 

@@ -55,19 +55,33 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
 
         if ($this->config->get('show_server_data')) {
             $this->matching->dumpData();
+            exit;
         }
         return $this->matching;
     }
 
     /**
-     * Redirect after login when deep link is given
+     * Manipulate the target parameter when deep link is given or course selection is needed
+     * This forces a redirection when the authentication process is finished
+     * NOTE: the redirection to the course selection needs a special rewrite rule in the web server
+     * @param ilObjUser $user
+     * @see ../README.md
      */
-    protected function checkDeepLink()
+    protected function prepareRedirection($user)
     {
-        if (isset($_GET['id']) && !isset($_GET['target']))
-        {
-            if ($ref_id = $this->getMatching()->getTargetCourseRefId($_GET['id']))
-            {
+        global $DIC;
+
+        if ($this->getMatching()->getCoursesToSelect()) {
+            $this->getMatching()->saveCoursesToSelect();
+
+            if (isset($_GET['id'])) {
+                $DIC->ctrl()->setParameterByClass('ilVhbShibAuthCourseSelectGUI', 'deepLink', $_GET['id']);
+            }
+            $target = $DIC->ctrl()->getLinkTargetByClass(['iluipluginroutergui','ilVhbShibAuthCourseSelectGUI'],null,null, true);
+            $_GET['target'] = $target;
+        }
+        elseif (isset($_GET['id']) && !isset($_GET['target'])) {
+            if ($ref_id = $this->getMatching()->getTargetCourseRefId($user, $_GET['id'])) {
                 $_GET['target'] = 'crs_'. $ref_id;
             }
         }
@@ -108,7 +122,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     public function afterCreateUser(ilObjUser $user)
     {
         $this->getMatching()->assingMatchingCourses($user);
-        $this->checkDeepLink();
+        $this->prepareRedirection($user);
         return $user;
     }
 
@@ -123,7 +137,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     public function afterUpdateUser(ilObjUser $user)
     {
         $this->getMatching()->assingMatchingCourses($user);
-        $this->checkDeepLink();
+        $this->prepareRedirection($user);
         return $user;
     }
 
