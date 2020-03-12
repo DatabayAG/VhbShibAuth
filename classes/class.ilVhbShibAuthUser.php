@@ -73,10 +73,8 @@ class ilVhbShibAuthUser extends shibUser
     {
         parent::createFields();
 
-        $this->setLogin($this->returnNewLoginName());
         $this->setExternalAccount($this->returnNewExtAccount());
         $this->setAuthMode($this->returnNewAuthMode());
-
         $this->setMatriculation($this->shibServerData->getMatriculation());
     }
 
@@ -98,11 +96,14 @@ class ilVhbShibAuthUser extends shibUser
      */
     public function create()
     {
-        if ($this->hasToBeCreated) {
-            return parent::create();
+         if ($this->hasToBeCreated) {
+            parent::create();
+            $this->updateLoginName();
+            return $this->getId();
         }
         else {
-            return parent::update();
+            parent::update();
+            return $this->getId();
         }
     }
 
@@ -116,6 +117,7 @@ class ilVhbShibAuthUser extends shibUser
         if ($this->hasToBeCreated) {
             // do things normally done in ilAuthProviderShibboleth::doAuthentication when account is created
             parent::create();
+            $this->updateLoginName();
             $this->updateOwner();
             $this->saveAsNew();
             $this->writePrefs();
@@ -175,14 +177,40 @@ class ilVhbShibAuthUser extends shibUser
      */
     protected function returnNewLoginName()
     {
+        global $DIC;
+        $ilDB = $DIC->database();
+
         if ($this->shibServerData->isLocalUser() && $this->config->get('local_user_take_login')) {
             return $this->getUniqueLoginName($this->shibServerData->getLocalUserName());
         }
-        if (!$this->shibServerData->isLocalUser() && $this->config->get('external_user_take_login')) {
-            return $this->getUniqueLoginName($this->shibServerData->getLogin());
+        if (!$this->shibServerData->isLocalUser() && $this->config->get('external_user_login_prefix')) {
+            // This may be identical to the created usr_id but does not need
+            // updateLoginName() handle this after the user is created
+            $number = $ilDB->nextId('object_data') + 1;
+            $login = $this->config->get('external_user_login_prefix') . $number;
+            return $this->getUniqueLoginName($login);
         }
 
         return parent::returnNewLoginName();
+    }
+
+    /**
+     * Update the login name if it should match the
+     */
+    protected function updateLoginName()
+    {
+        global $DIC;
+        $ilDB = $DIC->database();
+
+        $prefix = $this->config->get('external_user_login_prefix');
+        if (!$this->shibServerData->isLocalUser() && !empty($prefix) && $this->getLogin() != $prefix . $this->getId()) {
+            $this->setLogin($this->getUniqueLoginName($prefix . $this->getId()));
+            $ilDB->manipulateF('
+				UPDATE usr_data
+				SET login = %s
+				WHERE usr_id = %s',
+                array('text', 'integer'), array($this->getLogin(), $this->getId()));
+        }
     }
 
     /**
@@ -221,10 +249,10 @@ class ilVhbShibAuthUser extends shibUser
      */
     protected function getUniqueLoginName($login)
     {
-        $appendix = null;
-        $login_tmp = $login;
+        $appendix = 1;
+        $login_base = $login;
         while (self::_loginExists($login, $this->getId())) {
-            $login = $login_tmp . $appendix;
+            $login = $login_base . '.' .$appendix;
             $appendix ++;
         }
         return $login;

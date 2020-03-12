@@ -58,18 +58,18 @@ class ilVhbShibAuthConfig
         );
 
         $params[] = ilVhbShibAuthParam::_create(
-            'external_user_take_login',
-            'Lange vhb-Kennung als Login für externe Benutzer',
-            'Externe Benutzer sollen mit der kompletten vhb-Benutzerkenung als Login-Name angelegt werden. Im Standard wird ein Login-Name generiert.'
-            . '<br />Die vhb-Benutzerkennung hat die Form "123457X25@vhb.org".',
-            ilVhbShibAuthParam::TYPE_BOOLEAN
+            'external_user_login_prefix',
+            'Login-Präfix für externe Benutzer',
+            'Externe Benutzer sollen mit diesem Präfix und einer anonymen Nummmer als Login-Name angelegt werden. Das entspricht dem Verfahren der alten vhb-Schnittstelle. Wenn das Feld leer ist ein Login-Name aus Vor- und Nachname generiert.',
+            ilVhbShibAuthParam::TYPE_TEXT,
+            'vhb.'
         );
 
         $params[] = ilVhbShibAuthParam::_create(
             'external_user_matrikulation',
             'Kurze vhb-Kennung als Matrikelnummer für externe Benutzer',
             'Für externe Benutzer wird die kurze vhb-Kennung ohne Suffix, also z.B. "123457X25" als Matrikelnummer eingetragen.'
-            . '<br />Das entspricht dem Verfahren der alten vhb-Schnitstelle.',
+            . '<br />Das entspricht dem Verfahren der alten vhb-Schnittstelle.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
 
