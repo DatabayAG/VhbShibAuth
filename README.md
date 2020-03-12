@@ -1,7 +1,7 @@
 Shibboleth-Authentifizierung für ILIAS im vhb-Verbund
 =====================================================
 
-Copyright (c) 2018 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
+Copyright (c) 2020 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 Autor:
 * Fred Neumann <fred.neumann@fau.de>
@@ -75,7 +75,7 @@ Alias /__vhb__                  /srv/www/vhosts/demo/htdocs/shib_login.php
         RedirectMatch "/__vhb__/ilias.php(.*)"  "https://www.demo.odl.org/ilias.php$1"
         RedirectMatch "/__vhb__/error.php(.*)"  "https://www.demo.odl.org/error.php$1"
 
-        # Spezialfall: Weiterleitung zur Kursauswahl, wenn menrere Kurse passen
+        # Spezialfall: Weiterleitung zur Kursauswahl, wenn mehrere Kurse passen
         RewriteEngine On
         RewriteCond %{QUERY_STRING} ^target=ilias.php(.*)$
         RewriteRule  .*/goto.php  https://www.demo.odl.org.de/ilias.php%1  [L]
@@ -107,8 +107,21 @@ https://www.demo.odl.org/__vhb__
 Plugin-Konfiguration
 --------------------
 
-1. Wechseln Sie zu Asministration > Plugins
-2. Wählen Sie die Aktion "Konfigurieren" für das VhbShibAuth-Plugin
+* Wechseln Sie zu Administration > Plugins
+* Wählen Sie die Aktion "Konfigurieren" für das VhbShibAuth-Plugin
+* Beachten Sie dabei die Hinweise zu den Eingabefeldern.
 
-Das Suchmuster für lokale Benutzer kann konfiguriert werden, wird aber aktuell noch nicht weiter beachtet.
-Wichtig sind die Einstellungen zur Kurszuweisung. Nehmen Sie diese entsprechend der Erklärungen im Einstellungsformular vor.
+Kurs-Konfiguration
+------------------
+
+* Rufen Sie in einem Kurs die Metadaten auf.
+* Wecheseln Sie zum Bereich "Allgemein".
+* Fügen Sie eine neue Kennung hinzu.
+* Tragen Sie für die Kennung ins linke Eingabefeld vhb und in das Rechte die LV-Nummer ein.
+
+
+Ein ILIAS-Kurs kann mehrere LV-Nummerm zugeordnet haben und damit Mitglieder aus mehreren vhb-Kursen, z.B. unterschiedlicher Semester aufnehmen.
+Sie Können bei der LV-Nummer auch Wildcards (? und *) verwenden. Werden bei der Authentifizierung zu einer vhb-Kursbuchung mehrere passende
+ILIAS-Kurse gefunden, erscheint für Studierende eine Auswahlseite. Evaluatoren und Gäste werden automatisch in alle passenden Kurse eingeschrieben,
+sofern sie eine entsprechnende Rolle enthalten.
+
