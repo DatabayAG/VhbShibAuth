@@ -102,6 +102,10 @@ class ilVhbShibAuthUser extends shibUser
             return $this->getId();
         }
         else {
+            $this->setTimeLimitUnlimited(1);
+            $this->setTimeLimitFrom(time());
+            $this->setTimeLimitUntil(time());
+            $this->setActive(true);
             parent::update();
             return $this->getId();
         }
@@ -124,6 +128,10 @@ class ilVhbShibAuthUser extends shibUser
             return true;
         }
         else {
+            $this->setTimeLimitUnlimited(1);
+            $this->setTimeLimitFrom(time());
+            $this->setTimeLimitUntil(time());
+            $this->setActive(true);
             return parent::update();
         }
     }
