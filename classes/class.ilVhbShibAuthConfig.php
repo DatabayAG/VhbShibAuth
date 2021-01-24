@@ -76,12 +76,21 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_auth_mode',
             'Authentifizierungsmodus für lokale Benutzer',
-            'Authentifizierungsmodus, der für lokale Benutzer gesetzt werden soll.'
-            . '<br />Bei externen Benutzern wid immer "Shibboleth" eigetragen.',
+            'Authentifizierungsmodus, der für lokale Benutzer gesetzt werden soll.',
             ilVhbShibAuthParam::TYPE_SELECT,
             4,
             $this->getAuthModes()
         );
+
+        $params[] = ilVhbShibAuthParam::_create(
+            'external_user_auth_mode',
+            'Authentifizierungsmodus für externe Benutzer',
+            'Authentifizierungsmodus, der für externe Benutzer gesetzt werden soll (normalerweise Shibboleth).',
+            ilVhbShibAuthParam::TYPE_SELECT,
+            4,
+            $this->getAuthModes()
+        );
+
 
         $params[] = ilVhbShibAuthParam::_create(
             'entitle_settings',
