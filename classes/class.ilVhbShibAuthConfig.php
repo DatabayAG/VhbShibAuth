@@ -133,6 +133,31 @@ class ilVhbShibAuthConfig
             'Gibt die übermittelten Daten aus und beendet die Verarbeitung.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
+        $params[] = ilVhbShibAuthParam::_create(
+            'log_server_data',
+            'Logge Serverdaten',
+            'Protokolliere die Serverdaten unter ' . ILIAS_DATA_DIR . '/VhbShibAuth.log',
+            ilVhbShibAuthParam::TYPE_BOOLEAN
+        );
+        $params[] = ilVhbShibAuthParam::_create(
+            'test_activation',
+            'Testmodus-Aktivierung',
+            'Wert für den URL-Parameter "test", der die unten stehenden Testdaten aktiviert.',
+            ilVhbShibAuthParam::TYPE_TEXT
+        );
+        $params[] = ilVhbShibAuthParam::_create(
+            'test_principal_name',
+            'Test: eduPersonPrincipalName',
+            'Überschreibt im Testmodus den Wert des Attributs.',
+            ilVhbShibAuthParam::TYPE_TEXT
+        );
+        $params[] = ilVhbShibAuthParam::_create(
+            'test_entitlement',
+            'Test: eduPersonEntitlement',
+            'Überschreibt im Testmodus den Wert des Attributs.',
+            ilVhbShibAuthParam::TYPE_TEXT
+        );
+
 
 
         foreach ($params as $param)

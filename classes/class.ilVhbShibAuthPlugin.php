@@ -48,15 +48,39 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      */
     public function getMatching()
     {
-        if (!isset($this->matching)) {
-            $this->includeClass('class.ilVhbShibAuthMatching.php');
-            $this->matching = new ilVhbShibAuthMatching($this);
+        if (isset($this->matching)) {
+            return $this->matching;
         }
 
-        if ($this->config->get('show_server_data')) {
-            $this->matching->dumpData();
+        // apply test data as early as possible
+        if (!empty($_GET['test']) &&  $_GET['test'] == $this->getConfig()->get('test_activation')) {
+            $_SERVER['eduPersonPrincipalName'] = $this->getConfig()->get('test_principal_name');
+            $_SERVER['eduPersonEntitlement'] = $this->getConfig()->get('test_entitlement');
+        }
+
+        $this->includeClass('class.ilVhbShibAuthMatching.php');
+        $this->matching = new ilVhbShibAuthMatching($this);
+
+        // debugging output
+        if ($this->getConfig()->get('show_server_data')) {
+            echo '<pre>';
+            echo $this->matching->getDataDump();
+            echo '</pre>';
             exit;
         }
+
+        // logging
+        if ($this->getConfig()->get('log_server_data')) {
+
+            $content = "-------------------\n"
+                . date('Y-m-d H:i:s') . "\n"
+                . "-------------------\n"
+                . $this->matching->getDataDump();
+
+            file_put_contents(ILIAS_DATA_DIR . '/VhbShibAuth.log', $content, FILE_APPEND);
+        }
+
+
         return $this->matching;
     }
 
@@ -71,8 +95,8 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     {
         global $DIC;
 
-        if (!empty($this->getMatching()->getCoursesToSelect())) {
-            $this->getMatching()->saveCoursesToSelect();
+        if (!empty($this->getMatching()->getCoursesToSelect($_GET['id']))) {
+            $this->getMatching()->saveCoursesToSelect($_GET['id']);
 
             if (isset($_GET['id'])) {
                 $DIC->ctrl()->setParameterByClass('ilVhbShibAuthCourseSelectGUI', 'deepLink', $_GET['id']);
@@ -89,7 +113,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
 
 
     /**
-     * Hook from shibboleth authentication before the user object is created
+     * Hook from Shibboleth authentication before the user object is created
      * Ignore the prepared user from the default matching conditions
      * Return an own user object for the vhb matching conditions
      * @param ilObjUser $user

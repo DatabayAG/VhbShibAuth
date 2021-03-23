@@ -57,19 +57,32 @@ class ilVhbShibAuthMatching
 
     /**
      * Get the list of courses that need a selection
+     * @param string $lvnr
      * @return array $lvnr => ref_ids
      */
-    public function getCoursesToSelect()
+    public function getCoursesToSelect($lvnr = null)
     {
-        return $this->coursesToSelect;
+        if (empty($lvnr)) {
+            // no deep link => offer all that need selection
+            return $this->coursesToSelect;
+        }
+        elseif (isset($this->coursesToSelect[$lvnr])) {
+            // deep link needs selection => offer only this
+            return [$lvnr => $this->coursesToSelect[$lvnr]];
+        }
+        else {
+            // deep link does not need a selection => dont' offer a selection
+            return [];
+        }
     }
 
     /**
      * Save the list of courses that need a selection
+     * @param string $lvnr
      */
-    public function saveCoursesToSelect()
+    public function saveCoursesToSelect($lvnr = null)
     {
-        $_SESSION['ilVhbShibAuth']['coursesToSelect'] = $this->coursesToSelect;
+        $_SESSION['ilVhbShibAuth']['coursesToSelect'] = $this->getCoursesToSelect($lvnr);
     }
 
     /**
@@ -287,15 +300,21 @@ class ilVhbShibAuthMatching
     /**
      * Print a data dump and exit
      */
-    public function dumpData()
+    public function getDataDump()
     {
-        echo '<pre>';
-        echo 'Extracted Shibboleth Data: ';
-        print_r($this->data->getData());
-        echo '';
-        echo 'Raw Server Data: ';
-        print_r((array) $_SERVER);
-        echo '</pre>';
+        return (implode("\n", [
+        'Extracted Shibboleth Data: ',
+        print_r($this->data->getData(), true),
+        '',
+        '$_SERVER: ',
+        print_r((array) $_SERVER, true),
+        '$_GET: ',
+        print_r((array) $_GET, true),
+        '$_POST: ',
+        print_r((array) $_POST, true),
+        '$_COOKIE: ',
+        print_r((array) $_COOKIE,true)
+        ]));
     }
 
 }
