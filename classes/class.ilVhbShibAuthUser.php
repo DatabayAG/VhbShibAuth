@@ -66,6 +66,14 @@ class ilVhbShibAuthUser extends shibUser
     }
 
     /**
+     * Return if the user account already exists
+     */
+    public function isNew()
+    {
+        return $this->hasToBeCreated;
+    }
+
+    /**
      * Set specific fields for a new user from the server data
      * All other fields ar set according to the standard shibboleth configuration
      */

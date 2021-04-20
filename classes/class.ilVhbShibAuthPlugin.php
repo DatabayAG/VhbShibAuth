@@ -121,7 +121,9 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      */
     public function beforeCreateUser(ilObjUser $user)
     {
-        return $this->getMatching()->getMatchedUser();
+        $user =  $this->getMatching()->getMatchedUser();
+        $this->getMatching()->checkAccess($user);
+        return $user;
     }
 
     /**
@@ -133,7 +135,9 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      */
     public function beforeUpdateUser(ilObjUser $user)
     {
-        return $this->getMatching()->getMatchedUser();
+        $user =  $this->getMatching()->getMatchedUser();
+        $this->getMatching()->checkAccess($user);
+        return $user;
     }
 
 

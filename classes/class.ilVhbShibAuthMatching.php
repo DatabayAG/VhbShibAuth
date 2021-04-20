@@ -56,6 +56,35 @@ class ilVhbShibAuthMatching
     }
 
     /**
+     * Check if the user has access
+     *
+     * @param ilVhbShibAuthUser $user
+     */
+    public function checkAccess(ilVhbShibAuthUser $user)
+    {
+        global $DIC;
+        /** @var ilErrorHandling $ilErr */
+        $ilErr = $DIC['ilErr'];
+
+        if (!$this->hasVhbAccess()) {
+            $ilErr->raiseError($this->plugin->txt('err_no_vhb_access'));
+        }
+
+        if ($user->isNew() && empty($this->getEntitledVhbCourses())) {
+            $ilErr->raiseError($this->plugin->txt('err_no_vhb_entitlement'));
+        }
+    }
+
+    /**
+     * Check if the vhb access attribute is set
+     */
+    public function hasVhbAccess()
+    {
+        return (strpos($_SERVER['eduPersonEntitlement'], 'urn:mace:vhb.org:entitlement:vhb-access') !== false);
+    }
+
+
+    /**
      * Get the list of courses that need a selection
      * @param string $lvnr
      * @return array $lvnr => ref_ids
