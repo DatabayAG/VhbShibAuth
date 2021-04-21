@@ -203,11 +203,13 @@ class ilVhbShibAuthMatching
                 case 'evaluation':
                     $pattern = $this->config->get('evaluator_role');
                     $this->assignMatchingCourseRole($user_id, $ref_id, $pattern);
+                    $cp->addDesktopItem($user_id);
                     break;
 
                 case 'appr':
                     $pattern = $this->config->get('guest_role');
                     $this->assignMatchingCourseRole($user_id, $ref_id, $pattern);
+                    $cp->addDesktopItem($user_id);
                     break;
             }
         }
