@@ -34,6 +34,14 @@ class ilVhbShibAuthConfig
             'Einstellungen zum Anlegen und Auffinden von Benutzerkonten',
             ilVhbShibAuthParam::TYPE_HEAD
         );
+
+        $params[] = ilVhbShibAuthParam::_create(
+            'check_vhb_access',
+            'vhb-Zugriffsrecht prüfen',
+            'Prüft, ob das Shibboleth-Attribut "eduPersonEntitlement" die Zeichenkette "urn:mace:vhb.org:entitlement:vhb-access" enthält. Nur mit dieser erhalten Nutzer/-innen Zugriff.',
+            ilVhbShibAuthParam::TYPE_BOOLEAN
+        );
+
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_suffix',
             'Suffix bei lokalen Benutzern',

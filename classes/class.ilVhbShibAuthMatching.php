@@ -66,7 +66,7 @@ class ilVhbShibAuthMatching
         /** @var ilErrorHandling $ilErr */
         $ilErr = $DIC['ilErr'];
 
-        if (!$this->hasVhbAccess()) {
+        if ($this->config->get('check_vhb_access') && !$this->hasVhbAccess()) {
             $ilErr->raiseError($this->plugin->txt('err_no_vhb_access'));
         }
 
