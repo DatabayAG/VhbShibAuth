@@ -13,3 +13,4 @@ course_selection_no_description#:#Ohne Beschreibung
 continue#:#Weiter
 err_no_vhb_access#:#Von der vhb wurde kein Zugriffsrecht übermittelt. Bitte registrieren Sie sich unter www.vhb.org oder melden Sie sich dort für das aktuelle Semester zurück.
 err_no_vhb_entitlement#:#Von der vhb wurde keine Kursbuchung für diese Plattfrom übermittelt. Bitte buchen sie erst einen Kurs im Kursprogramm von CLASSIC vhb.
+err_multi_values_in#:#Im übermittelten Benutzerdatenfeld "%s" gibt es mehrere Werte: "%s". Das deutet auf eine Fehlkonfiguration hin. Bitte kontaktieren Sie die Plattform-Betreiber.

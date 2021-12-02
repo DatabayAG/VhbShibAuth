@@ -13,8 +13,13 @@ class ilVhbShibAuthData extends shibServerData
      */
     const DELIM = ';';
 
+    const VHB_SUFFIX = '@vhb.org';
+
     /** @var ilvhbShibAuthConfig */
     protected $config = null;
+
+    /** @var ilVhbShibAuthPlugin */
+    protected $plugin;
 
      /** @var string */
     protected $local_user_name = '';
@@ -32,32 +37,66 @@ class ilVhbShibAuthData extends shibServerData
      * Apply the vhb configuration
      * Should be done immediately after instantiation
      * @param ilVhbShibAuthConfig $config
+     * @param ilVhbShibAuthPlugin $plugin
      * @return $this
      */
-    public function configure($config) {
+    public function configure($config, $plugin)
+    {
+        global $DIC;
+        /** @var ilErrorHandling $ilErr */
+        $ilErr = $DIC['ilErr'];
 
         $this->config = $config;
+        $this->plugin = $plugin;
 
-        // LOCAL USER MATCH
-        // get the relevant login and aggregation index from the login field
+        // index position of the relevant user in the aggregation
+        $aggregation_index = 0;
+
+        // LOCAL USER
+        // get the login name and aggregation index of a local user
         // priority is on local user if aggregated
         $suffix = $this->config->get('local_user_suffix');
         $logins = explode(self::DELIM, $this->login);
-        $index = 0;
         foreach ($logins as $index => $login) {
             if (!empty($login) && !empty($suffix) && strpos($login, $suffix) > 0) {
                 $this->local_user_name = substr($login, 0,strpos($login, $suffix));
+                $aggregation_index = $index;
                 break;
             }
         }
 
+        // VHB USER
+        // get the aggregation index of the vhb user if the local user is not matched
+        // this prevents a logins being taken from the home IDP
+        if (empty($this->local_user_name)) {
+            $suffix = self::VHB_SUFFIX;
+            $logins = explode(self::DELIM, $this->login);
+            foreach ($logins as $index => $login) {
+                if (!empty($login) && !empty($suffix) && strpos($login, $suffix) > 0) {
+                    $aggregation_index = $index;
+                    break;
+                }
+            }
+        }
+
         // DE-AGGREGATION
-        // extract the relevant values from the aggregation
+        // extract the relevant values from aggregated fields
         // should not be necessary if SP is correctly configured at vhb
         foreach (array_keys(get_class_vars('shibConfig')) as $field) {
             $values = explode(self::DELIM, (string) $this->{$field});
-            if (count($values) > 1) {
-                $this->{$field} = $values[$index];
+
+            if ($this->config->get('resolve_aggregation')) {
+                // take the value from the position of the aggregation index
+                if (isset($values[$aggregation_index])) {
+                    $this->{$field} = $values[$aggregation_index];
+                }
+                // fallback: take the first value
+                elseif (isset($values[0])) {
+                    $this->{$field} = $values[0];
+                }
+            }
+            elseif (count($values) > 1) {
+                $ilErr->raiseError(sprintf($this->plugin->txt('err_multi_values_in'), $field, $this->{$field}));
             }
         }
         return $this;

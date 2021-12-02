@@ -43,6 +43,15 @@ class ilVhbShibAuthConfig
         );
 
         $params[] = ilVhbShibAuthParam::_create(
+            'resolve_aggregation',
+            'Aggregation auflösen',
+            'Bei Fehlern der Attribut-Aggregation kann es vorkommen, dass die Attribute eduPersonEntitlement, sn, mail und givenName mehrfach Werte enthalten. '
+            . 'Falls aktiviert, wird versucht, die Werte zu nehmen, die zu einem lokalen Account oder vhb-Account gehören. '
+            . 'Falls nicht, wird ein Fehler ausgegeben.',
+            ilVhbShibAuthParam::TYPE_BOOLEAN
+        );
+
+        $params[] = ilVhbShibAuthParam::_create(
             'local_user_suffix',
             'Suffix bei lokalen Benutzern',
             'Von Shibbloeth wird eine Benutzerkennung in der Form "kennung@hochschule.domain" übermittelt. "@hochschule.domain" ist das Suffix für den Identity Provider, zu dem die Kennung gehört.'
@@ -138,7 +147,7 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'show_server_data',
             'Zeige Serverdaten',
-            'Gibt die übermittelten Daten aus und beendet die Verarbeitung.',
+            'Gibt die übermittelten Daten aus und beendet die Verarbeitung. Bitte nur auf Testsystemen oder im Notfall aktivieren! Sonst könenn sich keine Studierenden mehr anmelden.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
         $params[] = ilVhbShibAuthParam::_create(
@@ -150,23 +159,40 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'test_activation',
             'Testmodus-Aktivierung',
-            'Wert für den URL-Parameter "test", der die unten stehenden Testdaten aktiviert.',
+            'Beim Aufruf der URL, die die Shibboleth-Sitzung gestartet kann ein Parameter angehängt werden, der den Testmodus aktiviert, z.B. "www.host@domain/__vhb__?test=xxx". '
+            . " Entspricht der Wert dem Eintrag hier, können die von Shibboleth übermittelten Attribute mit eigenen Werten überschrieben werden.",
+            ilVhbShibAuthParam::TYPE_TEXT
+        );
+        $params[] = ilVhbShibAuthParam::_create(
+            'test_given_name',
+            'Test: givenName',
+            'Überschreibt im Testmodus den Wert des Attributs givenName (Vorname).',
+            ilVhbShibAuthParam::TYPE_TEXT
+        );
+        $params[] = ilVhbShibAuthParam::_create(
+            'test_sn',
+            'Test: sn',
+            'Überschreibt im Testmodus den Wert des Attributs sn (Nachname).',
+            ilVhbShibAuthParam::TYPE_TEXT
+        );
+        $params[] = ilVhbShibAuthParam::_create(
+            'test_mail',
+            'Test: mail',
+            'Überschreibt im Testmodus den Wert des Attributs mail (E-Mail-Adresse).',
             ilVhbShibAuthParam::TYPE_TEXT
         );
         $params[] = ilVhbShibAuthParam::_create(
             'test_principal_name',
             'Test: eduPersonPrincipalName',
-            'Überschreibt im Testmodus den Wert des Attributs.',
+            'Überschreibt im Testmodus den Wert des Attributs eduPersonPrincipalName (Benutzerkennung).',
             ilVhbShibAuthParam::TYPE_TEXT
         );
         $params[] = ilVhbShibAuthParam::_create(
             'test_entitlement',
             'Test: eduPersonEntitlement',
-            'Überschreibt im Testmodus den Wert des Attributs.',
+            'Überschreibt im Testmodus den Wert des Attributs eduPersonEntitlement (Kurszuordnung).',
             ilVhbShibAuthParam::TYPE_TEXT
         );
-
-
 
         foreach ($params as $param)
         {

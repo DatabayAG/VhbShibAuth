@@ -42,7 +42,7 @@ class ilVhbShibAuthMatching
         $this->config = $this->plugin->getConfig();
 
         $this->plugin->includeClass('class.ilVhbShibAuthData.php');
-        $this->data = ilVhbShibAuthData::getInstance()->configure($this->config);
+        $this->data = ilVhbShibAuthData::getInstance()->configure($this->config, $this->plugin);
     }
 
     /**
