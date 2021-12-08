@@ -45,7 +45,7 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'resolve_aggregation',
             'Aggregation auflösen',
-            'Bei Fehlern der Attribut-Aggregation kann es vorkommen, dass die Attribute eduPersonEntitlement, sn, mail und givenName mehrfach Werte enthalten. '
+            'Bei Fehlern der Attribut-Aggregation kann es vorkommen, dass die Attribute eduPersonPrincipalName, sn, mail und givenName mehrfach Werte enthalten. '
             . 'Falls aktiviert, wird versucht, die Werte zu nehmen, die zu einem lokalen Account oder vhb-Account gehören. '
             . 'Falls nicht, wird ein Fehler ausgegeben.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
