@@ -54,11 +54,21 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
 
         // apply test data as early as possible
         if (!empty($_GET['test']) &&  $_GET['test'] == $this->getConfig()->get('test_activation')) {
-            $_SERVER['givenName'] = $this->getConfig()->get('test_given_name');
-            $_SERVER['sn'] = $this->getConfig()->get('test_sn');
-            $_SERVER['mail'] = $this->getConfig()->get('test_mail');
-            $_SERVER['eduPersonPrincipalName'] = $this->getConfig()->get('test_principal_name');
-            $_SERVER['eduPersonEntitlement'] = $this->getConfig()->get('test_entitlement');
+            if (!empty($this->getConfig()->get('test_given_name'))) {
+                $_SERVER['givenName'] = $this->getConfig()->get('test_given_name');
+            }
+            if (!empty($this->getConfig()->get('test_sn'))) {
+                $_SERVER['sn'] = $this->getConfig()->get('test_sn');
+            }
+            if (!empty($this->getConfig()->get('test_mail'))) {
+                $_SERVER['mail'] = $this->getConfig()->get('test_mail');
+            }
+            if (!empty($this->getConfig()->get('test_principal_name'))) {
+                $_SERVER['eduPersonPrincipalName'] = $this->getConfig()->get('test_principal_name');
+            }
+            if (!empty($this->getConfig()->get('test_entitlement'))) {
+                $_SERVER['eduPersonEntitlement'] = $this->getConfig()->get('test_entitlement');
+            }
         }
 
         $this->includeClass('class.ilVhbShibAuthMatching.php');
