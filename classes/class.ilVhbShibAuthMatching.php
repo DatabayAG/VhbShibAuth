@@ -296,34 +296,50 @@ class ilVhbShibAuthMatching
     protected function findRelevantIliasCourses()
     {
         if (!isset($this->courses)) {
-            // find vhb course by catalog
-            $query = "SELECT o.obj_id, o.title, o.description, m.entry FROM il_meta_identifier m " .
+            $this->courses = array();
+
+
+            $queries = [
+                // find vhb course by LV number in catalog entry (ILIAS 5.4)
+                "SELECT o.obj_id, o.title, o.description, m.entry FROM il_meta_identifier m " .
                 " INNER JOIN object_data o ON m.obj_id = o.obj_id " .
                 " INNER JOIN crs_settings s ON s.obj_id = o.obj_id " .
                 " WHERE m.obj_type = 'crs'" .
                 " AND m.catalog = 'vhb'" .
-                " AND s.activation_type > 0";
-            $result = $this->db->query($query);
+                " AND s.activation_type > 0"
+                ,
+                // find vhb course by LV number in keyword (ILIAS 7 and higher)
+                "SELECT o.obj_id, o.title, o.description, m.keyword entry FROM il_meta_keyword m " .
+                " INNER JOIN object_data o ON m.obj_id = o.obj_id " .
+                " INNER JOIN crs_settings s ON s.obj_id = o.obj_id " .
+                " WHERE m.obj_type = 'crs'" .
+                " AND m.keyword LIKE 'LV_%'" .
+                " AND s.activation_type > 0"
+                ];
 
-            $this->courses = array();
-            while ($row = $this->db->fetchAssoc($result)) {
-                if (ilObject::_hasUntrashedReference($row["obj_id"])) {
-                    if (!ilObjCourseAccess::_isOffline($row["obj_id"])) {
-                        foreach (ilObject::_getAllReferences($row["obj_id"]) as $ref_id) {
-                            if (!isset($courses[$ref_id])) {
-                                $this->courses[$ref_id] = array(
-                                    'obj_id' => $row["obj_id"],
-                                    'title' => $row['title'],
-                                    'description' => $row['description'],
-                                    'lv_patterns' => array()
-                                );
+            foreach ($queries as $query) {
+
+                $result = $this->db->query($query);
+
+                while ($row = $this->db->fetchAssoc($result)) {
+                    if (ilObject::_hasUntrashedReference($row["obj_id"])) {
+                        if (!ilObjCourseAccess::_isOffline($row["obj_id"])) {
+                            foreach (ilObject::_getAllReferences($row["obj_id"]) as $ref_id) {
+                                if (!isset($courses[$ref_id])) {
+                                    $this->courses[$ref_id] = array(
+                                        'obj_id' => $row["obj_id"],
+                                        'title' => $row['title'],
+                                        'description' => $row['description'],
+                                        'lv_patterns' => array()
+                                    );
+                                }
+                                $this->courses[$ref_id]['lv_patterns'][] = $row['entry'];
                             }
-                            $this->courses[$ref_id]['lv_patterns'][] = $row['entry'];
                         }
                     }
                 }
             }
-        }
+         }
 
         return $this->courses;
     }

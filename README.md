@@ -1,11 +1,16 @@
 Shibboleth-Authentifizierung für ILIAS im vhb-Verbund
 =====================================================
 
-Copyright (c) 2020 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
+Copyright (c) 2020-2022 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 Autor:
 * Fred Neumann <fred.neumann@fau.de>
 
+Versionen
+---------
+
+* Die Version für ILIAS 5.4 liegt im branch *master*
+* Die Version für ILIAS 7 liegt im Branch *main-ilias7*
 
 Verwendung
 ----------
@@ -115,9 +120,10 @@ Kurs-Konfiguration
 ------------------
 
 * Rufen Sie in einem Kurs die Metadaten auf.
-* Wecheseln Sie zum Bereich "Allgemein".
 * Fügen Sie eine neue Kennung hinzu.
-* Tragen Sie für die Kennung ins linke Eingabefeld vhb und in das Rechte die LV-Nummer ein.
+* Tragen Sie für die LV-Nummer als Stichwort ein. Sie muss mit "LV_" beginnen.
+
+Das Plugin erkennt auch LV-Nummern, die in älteren ILIAS-Versionen im Metadaten-Bereich "Allgemein" als Kennungen mit dem Katalog "vhb" eingetragen wurden.
 
 
 Ein ILIAS-Kurs kann mehrere LV-Nummerm zugeordnet haben und damit Mitglieder aus mehreren vhb-Kursen, z.B. unterschiedlicher Semester aufnehmen.

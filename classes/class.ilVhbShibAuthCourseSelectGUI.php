@@ -21,7 +21,7 @@ class ilVhbShibAuthCourseSelectGUI
     /** @var ilLanguage */
     protected $lng;
 
-    /** @var ilTemplate */
+    /** @var ilGlobalTemplate */
     protected $tpl;
 
     /** @var ilCtrl */
@@ -48,7 +48,7 @@ class ilVhbShibAuthCourseSelectGUI
         $this->lng = $DIC->language();
         $this->user = $DIC->user();
         $this->ctrl = $DIC->ctrl();
-        $this->tpl = $DIC['tpl'];
+        $this->tpl = $DIC->ui()->mainTemplate();
     }
 
     /**
@@ -93,10 +93,9 @@ class ilVhbShibAuthCourseSelectGUI
 
         $this->initCourseSelectForm();
 
-        $this->tpl->getStandardTemplate();
         $this->tpl->setTitle($this->plugin->txt('course_selection_welcome'));
         $this->tpl->setContent($this->form->getHTML());
-        $this->tpl->show();
+        $this->tpl->printToStdout();
     }
 
 

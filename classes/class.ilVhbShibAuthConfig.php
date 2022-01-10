@@ -116,7 +116,8 @@ class ilVhbShibAuthConfig
             .'<code>urn:mace:vhb.org:entitlement:lms:student:uni-erlangen.de:LV_463_1227_1_67_1</code><br/><br/>'
             .'<code>student</code> ist die Nutzerrolle der Kurszuordnung bei der vhb.<br/>'
             .'<code>uni-erlangen.de</code> ist der Scope, d.h. eine Kennung der anbietenden Hochschule.<br/>'
-            .'<code>LV_463_1227_1_67_1</code> ist die Lehrveranstaltungsnummer der vhb. Ein zugehöriger ILIAS-Kurs muss in seinen Metadaten unter "Allgemein" eine Kennung mit Katalog "vhb" und der LV-Nummer als Eintrag haben.',
+            .'<code>LV_463_1227_1_67_1</code> ist die Lehrveranstaltungsnummer der vhb. Ein zugehöriger ILIAS-Kurs muss in seinen Metadaten unter "Allgemein" eine Kennung mit Katalog "vhb" und der LV-Nummer als Eintrag haben.<br/>'
+            .'Ab ILIAS 7 kann die LV-Nummer auch als Schlagwort in der Schnellbearbeitung der Metadaten eingegeben werden. Der Eintrag muss mit "LV_" beginnen und kann Platzhalter ? und * enthalten, um für mehrere Semester zu gelten.',
             ilVhbShibAuthParam::TYPE_HEAD
         );
         $params[] = ilVhbShibAuthParam::_create(
