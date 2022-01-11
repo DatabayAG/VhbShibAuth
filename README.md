@@ -122,7 +122,7 @@ Kurs-Konfiguration
 * Rufen Sie in einem Kurs die Metadaten auf.
 * Tragen Sie für die LV-Nummer als Stichwort ein. Sie muss mit "LV_" beginnen.
 
-Das Plugin erkennt auch LV-Nummern, die in älteren ILIAS-Versionen im Metadaten-Bereich "Allgemein" als Kennungen mit dem Katalog "vhb" eingetragen wurden. Da die Bearbeitung in diesem Bereich hakelig ist, sollten neue LV-Nummern nur noch als stichworte eingetragen werden.
+Das Plugin erkennt auch LV-Nummern, die in älteren ILIAS-Versionen im Metadaten-Bereich "Allgemein" als Kennungen mit dem Katalog "vhb" eingetragen wurden. Da die Bearbeitung in diesem Bereich hakelig ist, sollten neue LV-Nummern nur noch als Schlagworte eingetragen werden.
 
 
 Ein ILIAS-Kurs kann mehrere LV-Nummerm zugeordnet haben und damit Mitglieder aus mehreren vhb-Kursen, z.B. unterschiedlicher Semester aufnehmen.
