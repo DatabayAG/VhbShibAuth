@@ -62,16 +62,12 @@ class ilVhbShibAuthMatching
      */
     public function checkAccess(ilVhbShibAuthUser $user)
     {
-        global $DIC;
-        /** @var ilErrorHandling $ilErr */
-        $ilErr = $DIC['ilErr'];
-
         if ($this->config->get('check_vhb_access') && !$this->hasVhbAccess()) {
-            $ilErr->raiseError($this->plugin->txt('err_no_vhb_access'));
+            $this->plugin->raiseError($this->plugin->txt('err_no_vhb_access'));
         }
 
         if ($user->isNew() && empty($this->getEntitledVhbCourses())) {
-            $ilErr->raiseError($this->plugin->txt('err_no_vhb_entitlement'));
+            $this->plugin->raiseError($this->plugin->txt('err_no_vhb_entitlement'));
         }
     }
 

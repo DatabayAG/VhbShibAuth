@@ -5,3 +5,13 @@
 //
 
 <!-- language file start -->
+course_selection#:#Course Selection
+course_selection_welcome#:#Welcome to the Learning Platform
+course_selection_info#:#Some of your booked vhb courses have multiple courses in this platform.<br />Please select one course for each. Your selection will be remembered.
+course_selection_for#:#For Booking %s
+course_selection_no_description#:#Without Description
+continue#:#Continue
+vhb_error#:#Error at the Login from 'Virtuelle Hochschule Bayern (vhb)'
+err_no_vhb_access#:#The vhb did not transmit the access permission. Please register at www.vhb.org or activate your account for the current semester there.
+err_no_vhb_entitlement#:#The vhb did not transmit any course booking. Please book a course in CLASSIC vhb.
+err_multi_values_in#:#The transmitted user data field '%s' has multiple values: "%s". This may be a misconfiguration. Please contact the support of this support.

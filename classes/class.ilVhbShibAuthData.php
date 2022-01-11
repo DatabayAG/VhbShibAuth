@@ -42,10 +42,6 @@ class ilVhbShibAuthData extends shibServerData
      */
     public function configure($config, $plugin)
     {
-        global $DIC;
-        /** @var ilErrorHandling $ilErr */
-        $ilErr = $DIC['ilErr'];
-
         $this->config = $config;
         $this->plugin = $plugin;
 
@@ -96,7 +92,7 @@ class ilVhbShibAuthData extends shibServerData
                 }
             }
             elseif (count($values) > 1) {
-                $ilErr->raiseError(sprintf($this->plugin->txt('err_multi_values_in'), $field, $this->{$field}));
+                $this->plugin->raiseError(sprintf($this->plugin->txt('err_multi_values_in'), $field, $this->{$field}));
             }
         }
         return $this;

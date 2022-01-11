@@ -105,7 +105,7 @@ Konfigurieren und aktivieren Sie zunächst unter "Administration > Authentifizie
 * Attribut für E-Mailadresse: mail
 
 In der Regel wird die Authentifizierung durch Klick auf den Kurs-Link im vhb-Portal angestoßen und dabei der gewünschte Kurs als "Deep-Link" übergeben.
-Wenn Sie die vhb-Authentifizierung auf der Login-Seite von ILIAS verlinken möchten, können Sie dort einfach einen Link auf  "__vhb__" eintragen, im obigen Beispiel:
+Wenn Sie die vhb-Authentifizierung auf der Login-Seite von ILIAS verlinken möchten, können Sie dort einfach einen Link auf den Start der Shiboleth-Sitzung eintragen, im obigen Beispiel:
 https://www.demo.odl.org/__vhb__
 
 
@@ -120,10 +120,9 @@ Kurs-Konfiguration
 ------------------
 
 * Rufen Sie in einem Kurs die Metadaten auf.
-* Fügen Sie eine neue Kennung hinzu.
 * Tragen Sie für die LV-Nummer als Stichwort ein. Sie muss mit "LV_" beginnen.
 
-Das Plugin erkennt auch LV-Nummern, die in älteren ILIAS-Versionen im Metadaten-Bereich "Allgemein" als Kennungen mit dem Katalog "vhb" eingetragen wurden.
+Das Plugin erkennt auch LV-Nummern, die in älteren ILIAS-Versionen im Metadaten-Bereich "Allgemein" als Kennungen mit dem Katalog "vhb" eingetragen wurden. Da die Bearbeitung in diesem Bereich hakelig ist, sollten neue LV-Nummern nur noch als stichworte eingetragen werden.
 
 
 Ein ILIAS-Kurs kann mehrere LV-Nummerm zugeordnet haben und damit Mitglieder aus mehreren vhb-Kursen, z.B. unterschiedlicher Semester aufnehmen.

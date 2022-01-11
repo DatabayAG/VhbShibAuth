@@ -162,9 +162,8 @@ class ilVhbShibAuthUser extends shibUser
     public function saveAsNew($a_from_formular = true)
     {
         if ($this->hasToBeCreated) {
-            return parent::saveAsNew($a_from_formular);
+            parent::saveAsNew($a_from_formular);
         }
-        return true;
     }
 
     /**

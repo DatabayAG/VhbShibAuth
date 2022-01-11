@@ -62,7 +62,7 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_take_login',
             'Kurzes Kennung als Login für lokale Benutzer',
-            'Lokale Benutzer sollen mit der Kennung ohne Suffix als Login-Name angelegt werden. Im Standard wird ein Login-Name generiert.'
+            'Lokale Benutzer sollen mit der Kennung ohne Suffix als Login-Name angelegt werden. Im ILIAS-Standard wird ein Login-Name generiert.'
             . '<br />Die Kennung entspricht bei lokalen Benutzern der Benutzerkennung aus dem eigenen Identity Provider.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
@@ -70,7 +70,7 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'local_user_short_external',
             'Kurze Kennung als Externes Benutzerkonto für lokale Benutzer',
-            'Bei lokalen Benutzern soll die Kennung ohne Suffix als "Externes Benutzerkonto" eingetragen werden. Im Standard und bei externen Benutzern wird sie komplett eingetragen.',
+            'Bei lokalen Benutzern soll die Kennung ohne Suffix als "Externes Benutzerkonto" eingetragen werden. Im ILIAS-Standard und bei externen Benutzern wird sie komplett eingetragen.',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
 

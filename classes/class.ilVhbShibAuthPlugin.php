@@ -124,6 +124,15 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
         }
     }
 
+    /**
+     * Stop the authentication and show an error message
+     * @var string   message
+     */
+    public function raiseError($message)
+    {
+        ilUtil::sendFailure($message, true);
+        ilInitialisation::redirectToStartingPage();
+    }
 
     /**
      * Hook from Shibboleth authentication before the user object is created
