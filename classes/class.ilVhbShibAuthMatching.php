@@ -31,6 +31,11 @@ class ilVhbShibAuthMatching
     protected $coursesToSelect = [];
 
     /**
+     * @var ilRecommendedContentManager
+     */
+    protected $recommendedContentManager;
+
+    /**
      * Constructor
      * @param ilVhbShibAuthPlugin $plugin
      */
@@ -43,6 +48,8 @@ class ilVhbShibAuthMatching
 
         $this->plugin->includeClass('class.ilVhbShibAuthData.php');
         $this->data = ilVhbShibAuthData::getInstance()->configure($this->config, $this->plugin);
+
+        $this->recommendedContentManager = new ilRecommendedContentManager();
     }
 
     /**
@@ -194,18 +201,20 @@ class ilVhbShibAuthMatching
             {
                 case 'student':
                     $cp->add($user_id, IL_CRS_MEMBER);
+                    $this->recommendedContentManager->addObjectRecommendation($user_id, $ref_id);
                     break;
 
                 case 'evaluation':
                     $pattern = $this->config->get('evaluator_role');
                     $this->assignMatchingCourseRole($user_id, $ref_id, $pattern);
-                    $cp->addDesktopItem($user_id);
+                    $this->recommendedContentManager->addObjectRecommendation($user_id, $ref_id);
+
                     break;
 
                 case 'appr':
                     $pattern = $this->config->get('guest_role');
                     $this->assignMatchingCourseRole($user_id, $ref_id, $pattern);
-                    $cp->addDesktopItem($user_id);
+                    $this->recommendedContentManager->addObjectRecommendation($user_id, $ref_id);
                     break;
             }
         }
