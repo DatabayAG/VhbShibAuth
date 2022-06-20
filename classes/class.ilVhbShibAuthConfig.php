@@ -77,7 +77,7 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'external_user_login_prefix',
             'Login-Präfix für externe Benutzer',
-            'Externe Benutzer sollen mit diesem Präfix und einer anonymen Nummmer als Login-Name angelegt werden. Das entspricht dem Verfahren der alten vhb-Schnittstelle. Wenn das Feld leer ist ein Login-Name aus Vor- und Nachname generiert.',
+            'Externe Benutzer sollen mit diesem Präfix und einer anonymen Nummmer als Login-Name angelegt werden. Das entspricht dem Verfahren der alten vhb-Schnittstelle. Wenn das Feld leer ist, wird ein Login-Name aus Vor- und Nachname generiert.',
             ilVhbShibAuthParam::TYPE_TEXT,
             'vhb.'
         );

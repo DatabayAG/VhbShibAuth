@@ -73,7 +73,7 @@ class ilVhbShibAuthMatching
             $this->plugin->raiseError($this->plugin->txt('err_no_vhb_access'));
         }
 
-        if ($user->isNew() && empty($this->getEntitledVhbCourses())) {
+        if ($user->isNew() && $this->hasVhbAccess() && empty($this->getEntitledVhbCourses())) {
             $this->plugin->raiseError($this->plugin->txt('err_no_vhb_entitlement'));
         }
     }
