@@ -154,7 +154,7 @@ class ilVhbShibAuthConfig
         $params[] = ilVhbShibAuthParam::_create(
             'log_server_data',
             'Logge Serverdaten',
-            'Protokolliere die Serverdaten unter ' . ILIAS_DATA_DIR . '/VhbShibAuth.log',
+            'Protokolliere die Serverdaten unter ' . CLIENT_DATA_DIR . '/VhbShibAuth.log',
             ilVhbShibAuthParam::TYPE_BOOLEAN
         );
         $params[] = ilVhbShibAuthParam::_create(

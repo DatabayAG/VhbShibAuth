@@ -90,7 +90,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
                 . "-------------------\n"
                 . $this->matching->getDataDump();
 
-            file_put_contents(ILIAS_DATA_DIR . '/VhbShibAuth.log', $content, FILE_APPEND);
+            file_put_contents(CLIENT_DATA_DIR . '/VhbShibAuth.log', $content, FILE_APPEND);
         }
 
 
