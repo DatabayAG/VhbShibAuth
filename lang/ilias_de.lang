@@ -8,7 +8,8 @@
 course_selection#:#Kursauswahl
 course_selection_welcome#:#Willkommen bei der Lernplattform
 course_selection_info#:#Für eine oder mehrere Ihrer vhb-Kursbuchungen wurden in der Plattform verschiedene Durchgänge gefunden.<br />Bitte wählen Sie jeweils einen Durchgang aus. In der Folge müssen Sie die Auswahl dann nicht mehr treffen.
-course_selection_for#:#Für Buchung %s
+course_join_for#:#Direkter Beitritt für Buchung %s
+course_wait_for#:#Aufnahmeantrag für Buchung %s
 course_selection_no_description#:#Ohne Beschreibung
 continue#:#Weiter
 vhb_error#:#Fehler beim Login aus der virtuellen Hochschule Bayern (vhb)

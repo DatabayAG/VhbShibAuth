@@ -26,6 +26,23 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
         return "VhbShibAuth";
     }
 
+    /**
+     * Get the keyword in the meta data of a course for which students should make a join request
+     * (StudOn specific)
+     * @return string
+     */
+    public function getToConfirmKeyword()
+    {
+        return "VHB-Antrag";
+    }
+
+    /**
+     * Check if the plugin is installed in the StudOn platform of the FAU
+     */
+    public function isInStudOn()
+    {
+        return is_dir(__DIR__ . '/../../../../../../../../Services/FAU');
+    }
 
     /**
      * Get the plugin configuration

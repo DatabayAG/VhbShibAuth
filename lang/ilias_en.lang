@@ -8,7 +8,8 @@
 course_selection#:#Course Selection
 course_selection_welcome#:#Welcome to the Learning Platform
 course_selection_info#:#Some of your booked vhb courses have multiple courses in this platform.<br />Please select one course for each. Your selection will be remembered.
-course_selection_for#:#For Booking %s
+course_join_for#:#Direct Join For Booking %s
+course_wait_for#:#Request For Booking %s
 course_selection_no_description#:#Without Description
 continue#:#Continue
 vhb_error#:#Error at the Login from 'Virtuelle Hochschule Bayern (vhb)'

@@ -115,11 +115,34 @@ class ilVhbShibAuthCourseSelectGUI
             return;
         }
 
+//        $this->tpl->setTitle($this->plugin->txt('course_selection_welcome'));
+//        $this->tpl->setContent('<pre>' . print_r($_POST, true) . '</pre>');
+//        $this->tpl->printToStdout();
+//        return;
+
         // assign the selected courses
         foreach ($this->matching->getCoursesToSelect() as $lvnr => $ref_ids) {
-            $ref_id = (int) $this->form->getInput($lvnr);
-            if (in_array($ref_id, $ref_ids)) {
-                $this->matching->assignCourse($user->getId(), $ref_id);
+            $join_ref_id = (int) $this->form->getInput('join_' .$lvnr);
+            $wait_ref_ids = (array) $this->form->getInput('wait_' .$lvnr);
+
+            if (in_array($join_ref_id, $ref_ids)) {
+                // direct join
+                $this->matching->assignCourse($user->getId(), $join_ref_id);
+                // remove pending requests
+                foreach ($ref_ids as $ref_id) {
+                    $this->matching->removeRequest($user->getId(), $ref_id);
+                }
+            }
+            else {
+                // update requests
+                foreach ($ref_ids as $ref_id) {
+                    if (in_array($ref_id, $wait_ref_ids)) {
+                        $this->matching->addRequest($user->getId(), $ref_id);
+                    }
+                    else {
+                        $this->matching->removeRequest($user->getId(), $ref_id);
+                    }
+                }
             }
         }
 
@@ -149,19 +172,47 @@ class ilVhbShibAuthCourseSelectGUI
         $this->form->addCommandButton('saveCourseSelection', $this->plugin->txt('Continue'));
 
         foreach ($this->matching->getCoursesToSelect() as $lvnr => $ref_ids) {
-            $radio = new ilRadioGroupInputGUI(sprintf($this->plugin->txt('course_selection_for'), $lvnr), $lvnr);
+            // courses that can directly be joined via vhb (default case)
+            $join = new ilRadioGroupInputGUI(sprintf($this->plugin->txt('course_join_for'), $lvnr), 'join_'. $lvnr);
+
+            // courses where the join needs a confirmation (toggled by keyword given in plugin function getToConfirmKeyword())
+            $wait = new ilCheckboxGroupInputGUI(sprintf($this->plugin->txt('course_wait_for'), $lvnr), 'wait_'. $lvnr);
+            $join_has_options = false;
+            $wait_has_options = false;
+            $wait_on_list = [];
+
             foreach ($this->matching->findMatchingIliasCourses($lvnr) as $ref_id => $data) {
                 if (in_array($ref_id, $ref_ids)) {
-                    $option = new ilRadioOption($data['title'], $ref_id, $data['description'] ? $data['description'] : $this->plugin->txt('course_selection_no_description'));
-                    $radio->addOption($option);
+                    if ($data['to_confirm']) {
+                        $option = new ilCheckboxOption($data['title'], $ref_id,!empty($data['description']) ? $data['description'] : $this->plugin->txt('course_selection_no_description'));
+                        $wait->addOption($option);
+                        if ($this->matching->hasRequest($this->user->getId(), $ref_id)) {
+                            $wait_on_list[] = $ref_id;
+                        }
+                        $wait_has_options = true;
+                    }
+                    else {
+                        $option = new ilRadioOption($data['title'], $ref_id, !empty($data['description']) ? $data['description'] : $this->plugin->txt('course_selection_no_description'));
+                        $join->addOption($option);
+                        $join_has_options = true;
+                    }
                 }
             }
-            // A selection should be done for the linked entitlement
-            // to allow a redirection afterwards
-            if ($lvnr = $_GET['deepLink']) {
-                $radio->setRequired(true);
+
+            if ($join_has_options) {
+                // A selection should be done for the linked entitlement
+                // to allow a redirection afterwards
+                if ($_GET['deepLink'] && !$wait_has_options) {
+                    $join->setRequired(true);
+                }
+                $this->form->addItem($join);
             }
-            $this->form->addItem($radio);
+
+            if ($wait_has_options) {
+                $wait->setValue($wait_on_list);
+                $this->form->addItem($wait);
+            }
+
         }
 
         return $this->form;

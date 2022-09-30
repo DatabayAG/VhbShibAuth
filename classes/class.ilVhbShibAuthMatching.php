@@ -150,7 +150,8 @@ class ilVhbShibAuthMatching
 
         foreach ($this->getEntitledVhbCourses() as $lvnr => $role)
         {
-            $course_refs = array_keys($this->findMatchingIliasCourses($lvnr));
+            $course_data = $this->findMatchingIliasCourses($lvnr);
+            $course_refs = array_keys($course_data);
 
             // more courses found
             // students should get a course selection
@@ -161,9 +162,14 @@ class ilVhbShibAuthMatching
                 continue;
             }
 
-            foreach ($course_refs as $ref_id)
-            {
-                $this->assignCourse($user->getId(), $ref_id, $role);
+            // only one course is found
+            foreach ($course_data as $ref_id => $data) {
+                if ($data['to_confirm']) {
+                    $this->coursesToSelect[$lvnr] = [$ref_id];
+                }
+                else {
+                    $this->assignCourse($user->getId(), $ref_id, $role);
+                }
             }
         }
     }
@@ -182,6 +188,60 @@ class ilVhbShibAuthMatching
             }
         }
         return false;
+    }
+
+    /**
+     * Add a subscription request for a course
+     * @param integer $user_id
+     * @param integer $ref_id
+     */
+    public function addRequest($user_id, $ref_id)
+    {
+        $obj_id = ilObject::_lookupObjId($ref_id);
+        if ($this->plugin->isInStudOn()) {
+            $cw = new ilCourseWaitingList($obj_id);
+            $cw->addToList($user_id, '', ilCourseWaitingList::REQUEST_TO_CONFIRM);
+        }
+        else {
+            $cp = new ilCourseParticipants($obj_id);
+            $cp->addSubscriber($user_id);
+        }
+    }
+
+    /**
+     * Remove a subscription request for a course
+     * @param integer $user_id
+     * @param integer $ref_id
+     */
+    public function removeRequest($user_id, $ref_id)
+    {
+        $obj_id = ilObject::_lookupObjId($ref_id);
+        if ($this->plugin->isInStudOn()) {
+            $cw = new ilCourseWaitingList($obj_id);
+            $cw->removeFromList($user_id);
+        }
+        else {
+            $cp = new ilCourseParticipants($obj_id);
+            $cp->deleteSubscriber($user_id);
+        }
+    }
+
+    /**
+     * Chec if a user has a subscription request for a course
+     * @param integer $user_id
+     * @param integer $ref_id
+     */
+    public function hasRequest($user_id, $ref_id)
+    {
+        $obj_id = ilObject::_lookupObjId($ref_id);
+        if ($this->plugin->isInStudOn()) {
+            $cw = new ilCourseWaitingList($obj_id);
+            return $cw->isOnList($user_id);
+        }
+        else {
+            $cp = new ilCourseParticipants($obj_id);
+            return $cp->isSubscriber($user_id);
+        }
     }
 
     /**
@@ -273,7 +333,7 @@ class ilVhbShibAuthMatching
     /**
      * Find ILIAS courses that match a certain LV number
      * @param string $lvnr
-     * @return array    ref_id => ['obj_id' => int, 'title' => string, 'description' => string, 'lv_patterns' => [string, string, ...], ...]
+     * @return array    ref_id => ['obj_id' => int, 'title' => string, 'description' => string, 'lv_patterns' => [string, string, ...] 'to_confirm' => bool]
      */
     public function findMatchingIliasCourses($lvnr)
     {
@@ -293,10 +353,9 @@ class ilVhbShibAuthMatching
         return $courses;
     }
 
-
     /**
      * Find active ILIAS courses with an LV pattern in their meta data
-     * @return array   ref_id => ['obj_id' => int, 'title' => string, 'description' => string, 'lv_patterns' => [string, string, ...], ...]
+     * @return array   ref_id => ['obj_id' => int, 'title' => string, 'description' => string, 'lv_patterns' => [string, string, ...], 'to_confirm' => bool]
      */
     protected function findRelevantIliasCourses()
     {
@@ -335,7 +394,8 @@ class ilVhbShibAuthMatching
                                         'obj_id' => $row["obj_id"],
                                         'title' => $row['title'],
                                         'description' => $row['description'],
-                                        'lv_patterns' => array()
+                                        'lv_patterns' => array(),
+                                        'to_confirm' => $this->isToConfirm($ref_id)
                                     );
                                 }
                                 $this->courses[$ref_id]['lv_patterns'][] = $row['entry'];
@@ -348,6 +408,27 @@ class ilVhbShibAuthMatching
 
         return $this->courses;
     }
+
+    /**
+     * Check if a course needs confirmation
+     * @param integer $ref_id
+     * @return bool
+     */
+    protected function isToConfirm($ref_id)
+    {
+        $query = "SELECT r.ref_id FROM il_meta_keyword m " .
+            " INNER JOIN object_reference r ON m.obj_id = r.obj_id " .
+            " WHERE r.ref_id = " . $this->db->quote($ref_id, 'integer') .
+            " AND m.keyword = " . $this->db->quote($this->plugin->getToConfirmKeyword(), 'text');
+
+        $result = $this->db->query($query);
+        if (!empty($this->db->fetchAssoc($result))) {
+            return true;
+        }
+        return false;
+    }
+
+
 
     /**
      * Print a data dump and exit

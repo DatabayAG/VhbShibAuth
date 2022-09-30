@@ -9,6 +9,7 @@ Autor:
 Versionen
 ---------
 
+Siehe Historie am Ende der Seite.
 * Die Version für ILIAS 5.4 liegt im branch *master*
 * Die Version für ILIAS 7 liegt im Branch *main-ilias7*
 
@@ -133,3 +134,9 @@ Sie Können bei der LV-Nummer auch Wildcards (? und *) verwenden. Werden bei der
 ILIAS-Kurse gefunden, erscheint für Studierende eine Auswahlseite. Evaluatoren und Gäste werden automatisch in alle passenden Kurse eingeschrieben,
 sofern sie eine entsprechnende Rolle enthalten.
 
+Historie
+--------
+
+Version 1.1.0 (30.9.2022)
+* Das optionale Log wird im Client-Datenverzeichnis gespeichert
+* Modus für Aufnahmeanträge: bei Kursen mit dem Schlagwort "VHB-Antrag" werden Studierende nicht direkt eingeschrieben, sondern auf die Liste mit Aufnahmeanträgen gesetzt.
