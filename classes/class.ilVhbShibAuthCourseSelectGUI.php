@@ -90,8 +90,6 @@ class ilVhbShibAuthCourseSelectGUI
     {
         global $DIC;
 
-        $ilMainMenu = $DIC['ilMainMenu'];
-        $ilMainMenu->showLogoOnly(true);
         $this->tpl->setOnScreenMessage('info', $this->plugin->txt('course_selection_info'));
 
         $this->initCourseSelectForm();

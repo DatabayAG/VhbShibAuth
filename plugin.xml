@@ -1,0 +1,6 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<plugin id="vhbshib">
+    <events>
+        <event type="listen" id="Services/Authentication" />
+    </events>
+</plugin>

@@ -17,6 +17,11 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     protected $matching;
 
     /**
+     * @var string
+     */
+    protected $redirect_url = null;
+
+    /**
      * Get the keyword in the meta data of a course for which students should make a join request
      * (StudOn specific)
      * @return string
@@ -119,12 +124,11 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
             if (isset($_GET['id'])) {
                 $DIC->ctrl()->setParameterByClass('ilVhbShibAuthCourseSelectGUI', 'deepLink', $_GET['id']);
             }
-            $target = $DIC->ctrl()->getLinkTargetByClass(['iluipluginroutergui','ilVhbShibAuthCourseSelectGUI'],null,null, true);
-            $_GET['target'] = $target;
+            $this->redirect_url = $DIC->ctrl()->getLinkTargetByClass(['iluipluginroutergui','ilVhbShibAuthCourseSelectGUI'],null,null, true);
         }
         elseif (isset($_GET['id']) && !isset($_GET['target'])) {
             if ($ref_id = $this->getMatching()->getTargetCourseRefId($user, $_GET['id'])) {
-                $_GET['target'] = 'crs_'. $ref_id;
+                $this->redirect_url = ilLink::_getLink($ref_id, 'crs');
             }
         }
     }
@@ -241,4 +245,19 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     {
         return $user;
     }
+
+    /**
+     * Eventually redirect after a successful login
+     * @param string	$a_component
+     * @param string	$a_event
+     * @param mixed		$a_parameter
+     */
+    public function handleEvent($a_component, $a_event, $a_parameter)
+    {
+        global $DIC;
+        if ($a_event == 'afterLogin' && !empty($this->redirect_url)) {
+            $DIC->ctrl()->redirectToURL($this->redirect_url);
+        }
+    }
+
 }
