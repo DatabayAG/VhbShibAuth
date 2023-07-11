@@ -17,16 +17,6 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     protected $matching;
 
     /**
-     * Get Plugin Name. Must be same as in class name il<Name>Plugin
-     * and must correspond to plugins subdirectory name.
-     * @return	string
-     */
-    public function getPluginName()
-    {
-        return "VhbShibAuth";
-    }
-
-    /**
      * Get the keyword in the meta data of a course for which students should make a join request
      * (StudOn specific)
      * @return string
@@ -52,7 +42,6 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
     {
         if (!isset($this->config))
         {
-            $this->includeClass('class.ilVhbShibAuthConfig.php');
             $this->config = new ilVhbShibAuthConfig($this);
         }
         return $this->config;
@@ -88,7 +77,6 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
             }
         }
 
-        $this->includeClass('class.ilVhbShibAuthMatching.php');
         $this->matching = new ilVhbShibAuthMatching($this);
 
         // debugging output
@@ -143,11 +131,15 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
 
     /**
      * Stop the authentication and show an error message
-     * @var string   message
+     * @var string   $message
      */
     public function raiseError($message)
     {
-        ilUtil::sendFailure($message, true);
+        global $DIC;
+
+        /** @var ilGlobalTemplate $tpl */
+        $pl = $DIC['tpl'];
+        $tpl->setOnScreenMessage('failure', $message, true);
         ilInitialisation::redirectToStartingPage();
     }
 
@@ -158,7 +150,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilVhbShibAuthUser
      */
-    public function beforeCreateUser(ilObjUser $user)
+    public function beforeCreateUser(ilObjUser $user): ilObjUser
     {
         $user =  $this->getMatching()->getMatchedUser();
         $this->getMatching()->checkAccess($user);
@@ -172,7 +164,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function beforeUpdateUser(ilObjUser $user)
+    public function beforeUpdateUser(ilObjUser $user): ilObjUser
     {
         $user =  $this->getMatching()->getMatchedUser();
         $this->getMatching()->checkAccess($user);
@@ -186,7 +178,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function afterCreateUser(ilObjUser $user)
+    public function afterCreateUser(ilObjUser $user): ilObjUser
     {
         $this->getMatching()->assingMatchingCourses($user);
         $this->prepareRedirection($user);
@@ -201,7 +193,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function afterUpdateUser(ilObjUser $user)
+    public function afterUpdateUser(ilObjUser $user): ilObjUser
     {
         $this->getMatching()->assingMatchingCourses($user);
         $this->prepareRedirection($user);
@@ -214,7 +206,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function beforeLogin(ilObjUser $user)
+    public function beforeLogin(ilObjUser $user): ilObjUser
     {
         return $user;
     }
@@ -225,7 +217,8 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function afterLogin(ilObjUser $user) {
+    public function afterLogin(ilObjUser $user): ilObjUser 
+    {
         return $user;
     }
 
@@ -234,7 +227,8 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function beforeLogout(ilObjUser $user) {
+    public function beforeLogout(ilObjUser $user): ilObjUser 
+    {
         return $user;
     }
 
@@ -243,7 +237,8 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function afterLogout(ilObjUser $user) {
+    public function afterLogout(ilObjUser $user): ilObjUser 
+    {
         return $user;
     }
 }

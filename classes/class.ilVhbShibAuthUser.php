@@ -14,7 +14,7 @@
 class ilVhbShibAuthUser extends shibUser
 {
     /** @var ilVhbShibAuthData (extension of shibServerData) */
-    protected $shibServerData;
+    protected shibServerData $shibServerData;
 
     /** @var ilvhbShibAuthConfig */
     protected $config;
@@ -33,7 +33,8 @@ class ilVhbShibAuthUser extends shibUser
      * @param ilVhbShibAuthData $shibServerData (extension of shibServerData)
      * @return self
      */
-    public static function buildInstance(shibServerData $shibServerData) {
+    public static function buildInstance(shibServerData $shibServerData): shibUser
+    {
         $shibUser = new self();
         $shibUser->shibServerData = $shibServerData;
         return $shibUser;
@@ -68,7 +69,7 @@ class ilVhbShibAuthUser extends shibUser
     /**
      * Return if the user account already exists
      */
-    public function isNew()
+    public function isNew(): bool
     {
         return $this->hasToBeCreated;
     }
@@ -77,7 +78,7 @@ class ilVhbShibAuthUser extends shibUser
      * Set specific fields for a new user from the server data
      * All other fields ar set according to the standard shibboleth configuration
      */
-    public function createFields()
+    public function createFields(): void
     {
         parent::createFields();
 
@@ -90,7 +91,7 @@ class ilVhbShibAuthUser extends shibUser
      * Update the fields for an existing user from the server data
      * The fields ar updated according to the standard shibboleth configuration
      */
-    public function updateFields()
+    public function updateFields(): void
     {
         parent::updateFields();
     }
@@ -102,12 +103,11 @@ class ilVhbShibAuthUser extends shibUser
      * @throws ilUserException
      * @see ilAuthProviderShibboleth::doAuthentication()
      */
-    public function create()
+    public function create(): int
     {
          if ($this->hasToBeCreated) {
             parent::create();
             $this->updateLoginName();
-            return $this->getId();
         }
         else {
             $this->setTimeLimitUnlimited(1);
@@ -115,8 +115,9 @@ class ilVhbShibAuthUser extends shibUser
             $this->setTimeLimitUntil(time());
             $this->setActive(true);
             parent::update();
-            return $this->getId();
+            
         }
+        return $this->getId();
     }
 
     /**
@@ -125,7 +126,8 @@ class ilVhbShibAuthUser extends shibUser
      * @throws ilUserException
      * @see ilAuthProviderShibboleth::doAuthentication()
      */
-    public function update() {
+    public function update(): bool 
+    {
         if ($this->hasToBeCreated) {
             // do things normally done in ilAuthProviderShibboleth::doAuthentication when account is created
             parent::create();
@@ -147,29 +149,17 @@ class ilVhbShibAuthUser extends shibUser
     /**
      * @inheritDoc
      */
-    public function updateOwner()
+    public function saveAsNew(): void
     {
         if ($this->hasToBeCreated) {
-            return parent::updateOwner();
-        }
-        return true;
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function saveAsNew($a_from_formular = true)
-    {
-        if ($this->hasToBeCreated) {
-            parent::saveAsNew($a_from_formular);
+            parent::saveAsNew();
         }
     }
 
     /**
      * @inheritDoc
      */
-    public function writePref($a_keyword, $a_value)
+    public function writePref($a_keyword, $a_value): void
     {
         if ($this->hasToBeCreated) {
             parent::writePref($a_keyword, $a_value);
@@ -190,7 +180,7 @@ class ilVhbShibAuthUser extends shibUser
      * Return the login name for new users
      * @return string
      */
-    protected function returnNewLoginName()
+    protected function returnNewLoginName(): ?string
     {
         global $DIC;
         $ilDB = $DIC->database();

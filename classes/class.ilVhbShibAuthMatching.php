@@ -46,7 +46,6 @@ class ilVhbShibAuthMatching
         $this->plugin = $plugin;
         $this->config = $this->plugin->getConfig();
 
-        $this->plugin->includeClass('class.ilVhbShibAuthData.php');
         $this->data = ilVhbShibAuthData::getInstance()->configure($this->config, $this->plugin);
 
         $this->recommendedContentManager = new ilRecommendedContentManager();
@@ -58,7 +57,6 @@ class ilVhbShibAuthMatching
      */
     public function getMatchedUser()
     {
-        $this->plugin->includeClass('class.ilVhbShibAuthUser.php');
         return ilVhbShibAuthUser::buildInstance($this->data)->configure($this->config);
     }
 
@@ -200,7 +198,7 @@ class ilVhbShibAuthMatching
         $obj_id = ilObject::_lookupObjId($ref_id);
         if ($this->plugin->isInStudOn()) {
             $cw = new ilCourseWaitingList($obj_id);
-            $cw->addToList($user_id, '', ilCourseWaitingList::REQUEST_TO_CONFIRM);
+            $cw->addToList($user_id, '', 1); // REQUEST:TO_CONFIRM
         }
         else {
             $cp = new ilCourseParticipants($obj_id);
@@ -260,7 +258,7 @@ class ilVhbShibAuthMatching
             switch($role)
             {
                 case 'student':
-                    $cp->add($user_id, IL_CRS_MEMBER);
+                    $cp->add($user_id, ilParticipants::IL_CRS_MEMBER);
                     $this->recommendedContentManager->addObjectRecommendation($user_id, $ref_id);
                     break;
 
@@ -440,13 +438,13 @@ class ilVhbShibAuthMatching
         print_r($this->data->getData(), true),
         '',
         '$_SERVER: ',
-        print_r((array) $_SERVER, true),
+        print_r($_SERVER, true),
         '$_GET: ',
-        print_r((array) $_GET, true),
+        print_r($_GET, true),
         '$_POST: ',
-        print_r((array) $_POST, true),
+        print_r($_POST, true),
         '$_COOKIE: ',
-        print_r((array) $_COOKIE,true)
+        print_r($_COOKIE,true)
         ]));
     }
 

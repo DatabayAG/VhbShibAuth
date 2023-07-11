@@ -21,7 +21,7 @@ class ilVhbShibAuthData extends shibServerData
     /** @var ilVhbShibAuthPlugin */
     protected $plugin;
 
-     /** @var string */
+    /** @var string */
     protected $local_user_name = '';
 
     /**
@@ -29,7 +29,8 @@ class ilVhbShibAuthData extends shibServerData
      * (would otherwise get the parent class)
      * @return self
      */
-    public static function getInstance() {
+    public static function getInstance() : shibServerData
+    {
         return new self($_SERVER);
     }
 
@@ -55,7 +56,7 @@ class ilVhbShibAuthData extends shibServerData
         $logins = explode(self::DELIM, $this->login);
         foreach ($logins as $index => $login) {
             if (!empty($login) && !empty($suffix) && strpos($login, $suffix) > 0) {
-                $this->local_user_name = substr($login, 0,strpos($login, $suffix));
+                $this->local_user_name = substr($login, 0, strpos($login, $suffix));
                 $aggregation_index = $index;
                 break;
             }
@@ -85,13 +86,11 @@ class ilVhbShibAuthData extends shibServerData
                 // take the value from the position of the aggregation index
                 if (isset($values[$aggregation_index])) {
                     $this->{$field} = $values[$aggregation_index];
-                }
-                // fallback: take the first value
+                } // fallback: take the first value
                 elseif (isset($values[0])) {
                     $this->{$field} = $values[0];
                 }
-            }
-            elseif (count($values) > 1) {
+            } elseif (count($values) > 1) {
                 $this->plugin->raiseError(sprintf($this->plugin->txt('err_multi_values_in'), $field, $this->{$field}));
             }
         }
@@ -121,7 +120,7 @@ class ilVhbShibAuthData extends shibServerData
      * Decode a numeric gender if provided by vhb
      * @return string
      */
-    public function getGender()
+    public function getGender() : string
     {
         switch ($this->gender) {
             case 'm':
@@ -144,13 +143,13 @@ class ilVhbShibAuthData extends shibServerData
      * Get the matriculation number
      * @return string
      */
-    public function getMatriculation()
+    public function getMatriculation() : string
     {
         if (!$this->isLocalUser() && $this->config->get('external_user_matrikulation')) {
             $login = $this->getLogin();
             $suffix = '@vhb.org';
             if (!empty($login) && !empty($suffix) && strpos($login, $suffix) > 0) {
-                return substr($login, 0,strpos($login, $suffix));
+                return substr($login, 0, strpos($login, $suffix));
             }
         }
 
@@ -160,10 +159,11 @@ class ilVhbShibAuthData extends shibServerData
     /**
      * Get the pure data for a dump
      */
-    public function getData() {
+    public function getData()
+    {
         $data = [];
         foreach (array_keys(get_class_vars('shibConfig')) as $field) {
-            if (substr($field,0, 7)!= 'update_') {
+            if (substr($field, 0, 7) != 'update_') {
                 $data[$field] = $this->{$field};
             }
         }

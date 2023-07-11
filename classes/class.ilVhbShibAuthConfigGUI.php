@@ -15,7 +15,7 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
     /** @var ilLanguage */
 	protected $lng;
 
-	/** @var ilTemplate */
+	/** @var ilGlobalTemplate */
     protected $tpl;
 
     /** @var ilCtrl */
@@ -24,7 +24,7 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
     /**
 	 * Handles all commands, default is "configure"
 	 */
-	public function performCommand($cmd)
+	public function performCommand($cmd): void
 	{
         global $DIC;
 
@@ -76,10 +76,6 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
                     $input = new ilFormSectionHeaderGUI();
                     $input->setTitle($title);
                     break;
-                case ilVhbShibAuthParam::TYPE_TEXT:
-                    $input = new ilTextInputGUI($title, $postvar);
-                    $input->setValue($param->value);
-                    break;
                 case ilVhbShibAuthParam::TYPE_INT:
                     $input = new ilNumberInputGUI($title, $postvar);
                     $input->allowDecimals(false);
@@ -101,7 +97,11 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
                     $input->setOptions($param->options);
                     $input->setValue($param->value);
                     break;
-
+                case ilVhbShibAuthParam::TYPE_TEXT:
+                default:
+                    $input = new ilTextInputGUI($title, $postvar);
+                    $input->setValue($param->value);
+                    break;
             }
             $input->setInfo($description);
             $form->addItem($input);
@@ -126,7 +126,7 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
             }
             $this->config->write();
 
-			ilUtil::sendSuccess($this->lng->txt("settings_saved"), true);
+            $this->tpl->setOnScreenMessage('success', $this->lng->txt("settings_saved"), true);
 			$this->ctrl->redirect($this, 'configure');
 		}
 		else

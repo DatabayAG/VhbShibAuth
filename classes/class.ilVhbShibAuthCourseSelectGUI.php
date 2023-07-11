@@ -40,7 +40,10 @@ class ilVhbShibAuthCourseSelectGUI
     {
         global $DIC;
 
-        $this->plugin = ilPlugin::getPluginObject(IL_COMP_SERVICE, 'AuthShibboleth', 'shibhk', 'VhbShibAuth');
+        /** @var ilComponentFactory $component_factory */
+        $component_factory = $DIC["component.factory"];
+        $this->plugin = $component_factory->getPlugin('vhbshib');
+        
         $this->config = $this->plugin->getConfig();
         $this->matching = $this->plugin->getMatching();
         $this->matching->loadCoursesToSelect();
@@ -89,7 +92,7 @@ class ilVhbShibAuthCourseSelectGUI
 
         $ilMainMenu = $DIC['ilMainMenu'];
         $ilMainMenu->showLogoOnly(true);
-        ilUtil::sendInfo($this->plugin->txt('course_selection_info'));
+        $this->tpl->setOnScreenMessage('info', $this->plugin->txt('course_selection_info'));
 
         $this->initCourseSelectForm();
 

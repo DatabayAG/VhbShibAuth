@@ -23,7 +23,6 @@ class ilVhbShibAuthConfig
 	public function __construct($a_plugin_object)
 	{
 		$this->plugin = $a_plugin_object;
-		$this->plugin->includeClass('class.ilVhbShibAuthParam.php');
 
 		/** @var ilVhbShibAuthParam[] $params */
 		$params = array();
@@ -308,6 +307,7 @@ class ilVhbShibAuthConfig
         global $DIC;
         $rbacreview = $DIC['rbacreview'];
         $role_list = $rbacreview->getRolesByFilter(2);
+        $roles = [];
         foreach ($role_list as $data) {
             $roles[$data["obj_id"]] = $data["title"];
         }
