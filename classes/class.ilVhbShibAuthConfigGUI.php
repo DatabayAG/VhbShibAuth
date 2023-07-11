@@ -3,8 +3,10 @@
 
 /**
  * vhb Shibboleth Authentication configuration user interface class
+ * 
+ *  @ilCtrl_IsCalledBy ilVhbShibAuthConfigGUI: ilObjComponentSettingsGUI
  */
-class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
+class ilVhbShibAuthConfigGUI extends ilPluginConfigGUI
 {
 	/** @var ilVhbShibAuthPlugin $plugin */
 	protected $plugin;
@@ -84,7 +86,7 @@ class ilvhbShibAuthConfigGUI extends ilPluginConfigGUI
                     break;
                 case ilVhbShibAuthParam::TYPE_BOOLEAN:
                     $input = new ilCheckboxInputGUI($title, $postvar);
-                    $input->setChecked($param->value);
+                    $input->setChecked((bool) $param->value);
                     break;
                 case ilVhbShibAuthParam::TYPE_FLOAT:
                     $input = new ilNumberInputGUI($title, $postvar);

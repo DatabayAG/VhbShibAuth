@@ -315,11 +315,11 @@ class ilVhbShibAuthMatching
         foreach ($entitlements as $entitlement)
         {
             $parts = explode(':',$entitlement);
-            $role = $parts[5];
-            $scope = $parts[6];
-            $lvnr = $parts[7];
+            $role = $parts[5] ?? '';
+            $scope = $parts[6] ?? '';
+            $lvnr = $parts[7] ?? '';
 
-            if ($scope == $this->config->get('local_scope'))
+            if ($scope == $this->config->get('local_scope') && !empty($role) && !empty($lvnr))
             {
                 $courses[$lvnr] = $role;
             }

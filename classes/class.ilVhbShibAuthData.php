@@ -80,6 +80,9 @@ class ilVhbShibAuthData extends shibServerData
         // extract the relevant values from aggregated fields
         // should not be necessary if SP is correctly configured at vhb
         foreach (array_keys(get_class_vars('shibConfig')) as $field) {
+            if ($field == 'cache') {
+                continue;
+            }
             $values = explode(self::DELIM, (string) $this->{$field});
 
             if ($this->config->get('resolve_aggregation')) {
@@ -163,7 +166,7 @@ class ilVhbShibAuthData extends shibServerData
     {
         $data = [];
         foreach (array_keys(get_class_vars('shibConfig')) as $field) {
-            if (substr($field, 0, 7) != 'update_') {
+            if ($field !== 'cache' && substr($field, 0, 7) != 'update_') {
                 $data[$field] = $this->{$field};
             }
         }
