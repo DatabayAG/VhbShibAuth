@@ -1,7 +1,7 @@
 Shibboleth-Authentifizierung für ILIAS im vhb-Verbund
 =====================================================
 
-Copyright (c) 2020-2022 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
+Copyright (c) 2020-2023 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 Autor:
 * Fred Neumann <fred.neumann@fau.de>
@@ -27,12 +27,12 @@ Wenn Sie das Plugin als ZIP-Datei aus GitHub herunterladen, benennen Sie das ent
 (entfernen Sie das Branch-Suffix, z.B. -master und verwenden Sie die Groß-/Kleinschreibung wie angegeben).
 
 1. Kopieren Sie das Plugin-Verzeichnis in Ihrer ILIAS-Installation unter
-Customizing/global/plugins/Services/AuthShibboleth/ShibbolethAuthenticationHook
+`Customizing/global/plugins/Services/AuthShibboleth/ShibbolethAuthenticationHook`
 (erzeugen Sie die Unterverzeichnisse, falls nötig)
-
-2. Wechseln Sie zu Administration > Plugins
-3. Wählen Sie die Aktion  "Aktualisieren" für das VhbShibAuth-Plugin
-4. Wählen Sie die Aktion  "Aktivieren" für das VhbShibAuth-Plugin
+2. Führen Sie das *Composer Update* und *ILIAS Setup* wie bei einem Update von ILIAS aus
+3. Wechseln Sie zu Administration > Plugins
+4. Wählen Sie die Aktion  "Aktualisieren" für das VhbShibAuth-Plugin
+5. Wählen Sie die Aktion  "Aktivieren" für das VhbShibAuth-Plugin
 
 
 Server-Konfiguration
