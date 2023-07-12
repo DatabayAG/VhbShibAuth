@@ -12,6 +12,7 @@ Versionen
 Siehe Historie am Ende der Seite.
 * Die Version für ILIAS 5.4 liegt im branch *master*
 * Die Version für ILIAS 7 liegt im Branch *main-ilias7*
+* Die Version für ILIAS 8 liegt im Branch *main-ilias8*
 
 Verwendung
 ----------
@@ -136,6 +137,9 @@ sofern sie eine entsprechnende Rolle enthalten.
 
 Historie
 --------
+
+Version 1.2.3 (12.7.2023)
+* Version für ILIAS 8
 
 Version 1.1.0 (30.9.2022)
 * Das optionale Log wird im Client-Datenverzeichnis gespeichert
