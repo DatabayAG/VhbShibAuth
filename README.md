@@ -3,15 +3,14 @@ Shibboleth-Authentifizierung für ILIAS im vhb-Verbund
 
 Copyright (c) 2020-2022 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
-Autor:
-* Fred Neumann <fred.neumann@fau.de>
+**Die Weiterentwicklung wird durch die [Databay AG](https://www.databay.de) angeboten.**
 
 Versionen
 ---------
 
+Plugin Versionen für verschiedene ILIAS-Releases liegen in verschiedenen Branches dieses Repositories.
+
 Siehe Historie am Ende der Seite.
-* Die Version für ILIAS 5.4 liegt im branch *master*
-* Die Version für ILIAS 7 liegt im Branch *main-ilias7*
 
 Verwendung
 ----------
