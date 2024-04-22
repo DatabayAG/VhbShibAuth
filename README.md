@@ -3,16 +3,14 @@ Shibboleth-Authentifizierung für ILIAS im vhb-Verbund
 
 Copyright (c) 2020-2023 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
-Autor:
-* Fred Neumann <fred.neumann@fau.de>
+**Die Weiterentwicklung wird durch die [Databay AG](https://www.databay.de) angeboten.**
 
 Versionen
 ---------
 
+Plugin Versionen für verschiedene ILIAV-Releases liegen in verschiedenen Branches dieses Repositories.
+
 Siehe Historie am Ende der Seite.
-* Die Version für ILIAS 5.4 liegt im branch *master*
-* Die Version für ILIAS 7 liegt im Branch *main-ilias7*
-* Die Version für ILIAS 8 liegt im Branch *main-ilias8*
 
 Verwendung
 ----------
@@ -29,11 +27,9 @@ Wenn Sie das Plugin als ZIP-Datei aus GitHub herunterladen, benennen Sie das ent
 1. Kopieren Sie das Plugin-Verzeichnis in Ihrer ILIAS-Installation unter
 `Customizing/global/plugins/Services/AuthShibboleth/ShibbolethAuthenticationHook`
 (erzeugen Sie die Unterverzeichnisse, falls nötig)
-2. Führen Sie das *Composer Update* und *ILIAS Setup* wie bei einem Update von ILIAS aus
-3. Wechseln Sie zu Administration > Plugins
-4. Wählen Sie die Aktion  "Aktualisieren" für das VhbShibAuth-Plugin
-5. Wählen Sie die Aktion  "Aktivieren" für das VhbShibAuth-Plugin
-
+2. Führen Sie ein `composer du` im Installationsverzeichnis von ILIAS aus
+3. Wechseln Sie zu Administration > ILIAs erweitern > Plugins
+4. Installieen und aktivieren Sie das Plugin
 
 Server-Konfiguration
 --------------------
@@ -140,7 +136,3 @@ Historie
 
 Version 1.2.3 (12.7.2023)
 * Version für ILIAS 8
-
-Version 1.1.0 (30.9.2022)
-* Das optionale Log wird im Client-Datenverzeichnis gespeichert
-* Modus für Aufnahmeanträge: bei Kursen mit dem Schlagwort "VHB-Antrag" werden Studierende nicht direkt eingeschrieben, sondern auf die Liste mit Aufnahmeanträgen gesetzt.
