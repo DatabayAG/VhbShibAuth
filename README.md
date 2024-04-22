@@ -8,7 +8,7 @@ Copyright (c) 2020-2023 Institut fuer Lern-Innovation, Friedrich-Alexander-Unive
 Versionen
 ---------
 
-Plugin Versionen für verschiedene ILIAV-Releases liegen in verschiedenen Branches dieses Repositories.
+Plugin Versionen für verschiedene ILIAS-Releases liegen in verschiedenen Branches dieses Repositories.
 
 Siehe Historie am Ende der Seite.
 
