@@ -144,7 +144,7 @@ class ilVhbShibAuthData extends shibServerData
      * Get the matriculation number
      * @return string
      */
-    public function getMatriculation()
+    public function getMatriculation(): string
     {
         if (!$this->isLocalUser() && $this->config->get('external_user_matrikulation')) {
             $login = $this->getLogin();
