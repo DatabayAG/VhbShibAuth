@@ -29,7 +29,7 @@ class ilVhbShibAuthData extends shibServerData
      * (would otherwise get the parent class)
      * @return self
      */
-    public static function getInstance() {
+    public static function getInstance() : shibConfig {
         return new self($_SERVER);
     }
 
