@@ -121,7 +121,7 @@ class ilVhbShibAuthData extends shibServerData
      * Decode a numeric gender if provided by vhb
      * @return string
      */
-    public function getGender()
+    public function getGender(): string
     {
         switch ($this->gender) {
             case 'm':
