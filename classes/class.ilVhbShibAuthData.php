@@ -29,7 +29,7 @@ class ilVhbShibAuthData extends shibServerData
      * (would otherwise get the parent class)
      * @return self
      */
-    public static function getInstance() {
+    public static function getInstance() : shibConfig {
         return new self($_SERVER);
     }
 
@@ -121,7 +121,7 @@ class ilVhbShibAuthData extends shibServerData
      * Decode a numeric gender if provided by vhb
      * @return string
      */
-    public function getGender()
+    public function getGender(): string
     {
         switch ($this->gender) {
             case 'm':
@@ -144,7 +144,7 @@ class ilVhbShibAuthData extends shibServerData
      * Get the matriculation number
      * @return string
      */
-    public function getMatriculation()
+    public function getMatriculation(): string
     {
         if (!$this->isLocalUser() && $this->config->get('external_user_matrikulation')) {
             $login = $this->getLogin();
