@@ -142,7 +142,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
         global $DIC;
 
         /** @var ilGlobalTemplate $tpl */
-        $pl = $DIC['tpl'];
+        $tpl = $DIC->ui()->mainTemplate();
         $tpl->setOnScreenMessage('failure', $message, true);
         ilInitialisation::redirectToStartingPage();
     }

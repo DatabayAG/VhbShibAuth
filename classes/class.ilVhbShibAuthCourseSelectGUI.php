@@ -61,25 +61,16 @@ class ilVhbShibAuthCourseSelectGUI
     {
         // should be available when form is saved
         $this->ctrl->saveParameter($this, 'deepLink');
-        $this->checkAcceptance();
 
-        $cmd = $this->ctrl->getCmd('showCourseSelection');
+        $cmd = $this->ctrl->getCmd();
         switch ($cmd) {
             case 'showCourseSelection':
             case 'saveCourseSelection':
-
-            $this->$cmd();
-        }
-    }
-
-    /**
-     * Do an extra loop to let ILIAS present the terms of service automatically inbetween
-     * Check and set the Cmd to prevent an endless loop
-     */
-    protected function checkAcceptance() {
-
-        if (empty($this->ctrl->getCmd()) && $this->user->hasToAcceptTermsOfService()) {
-            $this->ctrl->redirect($this, 'showCourseSelection');
+                $this->$cmd();
+                break;
+            default:
+                // extra loop to eventually accept the terns of services
+                $this->ctrl->redirect($this, 'showCourseSelection');
         }
     }
 
@@ -150,7 +141,7 @@ class ilVhbShibAuthCourseSelectGUI
         // prepare redirection for the deep link
         if (isset($_GET['deepLink'])) {
             if ($ref_id = $this->matching->getTargetCourseRefId($user, $_GET['deepLink'])) {
-                $_GET['target'] = 'crs_'. $ref_id;
+                ilInitialisation::redirectToStartingPage('crs_'. $ref_id);
             }
         }
 
