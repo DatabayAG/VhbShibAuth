@@ -21,6 +21,18 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      */
     protected $redirect_url = null;
 
+
+    public function uninstall(): bool
+    {
+        if (parent::uninstall()) {
+            if ($this->db->tableExists('vhbshib_config')) {
+                return $this->db->dropTable('vhbshib_config');
+            }
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Get the keyword in the meta data of a course for which students should make a join request
      * (StudOn specific)
