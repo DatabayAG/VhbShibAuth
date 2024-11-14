@@ -1,25 +1,18 @@
-Shibboleth-Authentifizierung für ILIAS im vhb-Verbund
-=====================================================
+# Shibboleth-Authentifizierung für ILIAS im vhb-Verbund
 
 Copyright (c) 2020-2023 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 **Die Weiterentwicklung wird durch die [Databay AG](https://www.databay.de) angeboten.**
 
-Versionen
----------
+## Versionen
+Plugin Versionen für verschiedene ILIAS-Releases liegen in verschiedenen Branches dieses Repositories. Siehe [CHANGELOG.md](CHANGELOG.md) zu den Versionen.
 
-Plugin Versionen für verschiedene ILIAS-Releases liegen in verschiedenen Branches dieses Repositories.
-
-Siehe Historie am Ende der Seite.
-
-Verwendung
-----------
+## Verwendung
 Das Plugin kann im Zusammenhang mit der Standard-Shibboleth-Authentifizierung von ILAS eingesetzt werden und ermöglicht die automatische Zuordnung
 von ILIAS-Kursen beim Login aus dem Shibboleth-Verbund der Virtuellen Hochschule Bayern (vhb).
 Zusätzlich werden Kurslinks aus dem vhb-Portal unterstützt, so dass ein Student nach dem Kogin automatisch im gewünschten Kurs landet.
 
-Installation
-------------
+## Installation
 
 Wenn Sie das Plugin als ZIP-Datei aus GitHub herunterladen, benennen Sie das entpackte Verzeichnis bitte als *VhbShibAuth*
 (entfernen Sie das Branch-Suffix, z.B. -master und verwenden Sie die Groß-/Kleinschreibung wie angegeben).
@@ -29,10 +22,9 @@ Wenn Sie das Plugin als ZIP-Datei aus GitHub herunterladen, benennen Sie das ent
 (erzeugen Sie die Unterverzeichnisse, falls nötig)
 2. Führen Sie ein `composer du` im Installationsverzeichnis von ILIAS aus
 3. Wechseln Sie zu Administration > ILIAs erweitern > Plugins
-4. Installieen und aktivieren Sie das Plugin
+4. Installieren und aktivieren Sie das Plugin
 
-Server-Konfiguration
---------------------
+## Server-Konfiguration
 
 Richten Sie zunächst Ihren Webserver als Service-Provider im vhb-Verbund wie auf der folgenden Seite beschrieben ein:
 https://doc.vhb.org/aai/shibboleth_service_provider_config_vhb
@@ -87,8 +79,7 @@ Alias /__vhb__                  /srv/www/vhosts/demo/htdocs/shib_login.php
 ```
 
 
-ILIAS-Konfiguration
--------------------
+## ILIAS-Konfiguration
 
 Konfigurieren und aktivieren Sie zunächst unter "Administration > Authentifizierung / Neuanmeldung > Shibboleth" die Standard-Shibboleth-Authentifizierung von ILIAS. Treffen Sie dabei die notwendigen Einstellungen:
 
@@ -107,15 +98,13 @@ Wenn Sie die vhb-Authentifizierung auf der Login-Seite von ILIAS verlinken möch
 https://www.demo.odl.org/__vhb__
 
 
-Plugin-Konfiguration
---------------------
+## Plugin-Konfiguration
 
 * Wechseln Sie zu Administration > Plugins
 * Wählen Sie die Aktion "Konfigurieren" für das VhbShibAuth-Plugin
 * Beachten Sie dabei die Hinweise zu den Eingabefeldern.
 
-Kurs-Konfiguration
-------------------
+## Kurs-Konfiguration
 
 * Rufen Sie in einem Kurs die Metadaten auf.
 * Tragen Sie für die LV-Nummer als Schlagwort ein. Sie muss mit "LV_" beginnen.
@@ -130,9 +119,3 @@ Ein ILIAS-Kurs kann mehrere LV-Nummerm zugeordnet haben und damit Mitglieder aus
 Sie Können bei der LV-Nummer auch Wildcards (? und *) verwenden. Werden bei der Authentifizierung zu einer vhb-Kursbuchung mehrere passende
 ILIAS-Kurse gefunden, erscheint für Studierende eine Auswahlseite. Evaluatoren und Gäste werden automatisch in alle passenden Kurse eingeschrieben,
 sofern sie eine entsprechnende Rolle enthalten.
-
-Historie
---------
-
-Version 1.2.3 (12.7.2023)
-* Version für ILIAS 8
