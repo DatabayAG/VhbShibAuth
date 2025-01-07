@@ -81,7 +81,7 @@ class ilVhbShibAuthMatching
      */
     public function hasVhbAccess()
     {
-        return (strpos($_SERVER['eduPersonEntitlement'], 'urn:mace:vhb.org:entitlement:vhb-access') !== false);
+        return (strpos($_SERVER['eduPersonEntitlement'] ?? '', 'urn:mace:vhb.org:entitlement:vhb-access') !== false);
     }
 
 
@@ -311,7 +311,7 @@ class ilVhbShibAuthMatching
     {
         $courses = array();
 
-        $entitlements = explode(';', $_SERVER['eduPersonEntitlement']);
+        $entitlements = explode(';', $_SERVER['eduPersonEntitlement'] ?? '');
         foreach ($entitlements as $entitlement)
         {
             $parts = explode(':',$entitlement);
