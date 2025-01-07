@@ -136,3 +136,6 @@ Historie
 
 Version 1.2.3 (12.7.2023)
 * Version für ILIAS 8
+
+Version 1.2.4 (7.1.2025)
+* Fix error with empty eduPersonEntitlement
