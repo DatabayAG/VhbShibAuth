@@ -1,33 +1,34 @@
 <?php
+
 // Copyright (c) 2020-2023 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 /**
  * vhb Shibboleth Authentication configuration user interface class
- * 
+ *
  *  @ilCtrl_IsCalledBy ilVhbShibAuthConfigGUI: ilObjComponentSettingsGUI
  */
 class ilVhbShibAuthConfigGUI extends ilPluginConfigGUI
 {
-	/** @var ilVhbShibAuthPlugin $plugin */
-	protected $plugin;
+    /** @var ilVhbShibAuthPlugin $plugin */
+    protected $plugin;
 
-	/** @var ilVhbShibAuthConfig $config */
-	protected $config;
+    /** @var ilVhbShibAuthConfig $config */
+    protected $config;
 
     /** @var ilLanguage */
-	protected $lng;
+    protected $lng;
 
-	/** @var ilGlobalTemplate */
+    /** @var ilGlobalTemplate */
     protected $tpl;
 
     /** @var ilCtrl */
     protected $ctrl;
 
     /**
-	 * Handles all commands, default is "configure"
-	 */
-	public function performCommand($cmd): void
-	{
+     * Handles all commands, default is "configure"
+     */
+    public function performCommand($cmd): void
+    {
         global $DIC;
 
         // this can't be in constructor
@@ -35,45 +36,41 @@ class ilVhbShibAuthConfigGUI extends ilPluginConfigGUI
         $this->config = $this->plugin->getConfig();
         $this->lng = $DIC->language();
         $this->tpl = $DIC['tpl'];
-        $this->ctrl =$DIC->ctrl();
+        $this->ctrl = $DIC->ctrl();
 
-		switch ($cmd)
-		{
-			case "configure":
+        switch ($cmd) {
+            case "configure":
             case "saveSettings":
-				$this->$cmd();
-				break;
-		}
-	}
+                $this->$cmd();
+                break;
+        }
+    }
 
-	/**
-	 * Show configuration screen screen
-	 */
-	protected function configure()
-	{
-		$form = $this->initConfigurationForm();
-		$this->tpl->setContent($form->getHTML());
-	}
+    /**
+     * Show configuration screen screen
+     */
+    protected function configure()
+    {
+        $form = $this->initConfigurationForm();
+        $this->tpl->setContent($form->getHTML());
+    }
 
 
-	/**
-	 * Initialize the configuration form
-	 * @return ilPropertyFormGUI form object
-	 */
-	protected function initConfigurationForm()
-	{
-		require_once("./Services/Form/classes/class.ilPropertyFormGUI.php");
-		$form = new ilPropertyFormGUI();
-		$form->setFormAction($this->ctrl->getFormAction($this));
+    /**
+     * Initialize the configuration form
+     * @return ilPropertyFormGUI form object
+     */
+    protected function initConfigurationForm()
+    {
+        $form = new ilPropertyFormGUI();
+        $form->setFormAction($this->ctrl->getFormAction($this));
 
-        foreach ($this->config->getParams() as $name => $param)
-        {
+        foreach ($this->config->getParams() as $name => $param) {
             $title = $param->title;
             $description = $param->description;
             $postvar = $name;
 
-            switch($param->type)
-            {
+            switch ($param->type) {
                 case ilVhbShibAuthParam::TYPE_HEAD:
                     $input = new ilFormSectionHeaderGUI();
                     $input->setTitle($title);
@@ -110,31 +107,27 @@ class ilVhbShibAuthConfigGUI extends ilPluginConfigGUI
         }
 
 
-		$form->addCommandButton("saveSettings", $this->lng->txt("save"));
-		return $form;
-	}
+        $form->addCommandButton("saveSettings", $this->lng->txt("save"));
+        return $form;
+    }
 
-	/**
-	 * Save the settings
-	 */
-	protected function saveSettings()
-	{
-		$form = $this->initConfigurationForm();
-		if ($form->checkInput())
-		{
-		    foreach (array_keys($this->config->getParams()) as $name)
-            {
+    /**
+     * Save the settings
+     */
+    protected function saveSettings()
+    {
+        $form = $this->initConfigurationForm();
+        if ($form->checkInput()) {
+            foreach (array_keys($this->config->getParams()) as $name) {
                 $this->config->set($name, $form->getInput($name));
             }
             $this->config->write();
 
             $this->tpl->setOnScreenMessage('success', $this->lng->txt("settings_saved"), true);
-			$this->ctrl->redirect($this, 'configure');
-		}
-		else
-		{
-			$form->setValuesByPost();
-			$this->tpl->setContent($form->getHtml());
-		}
-	}
+            $this->ctrl->redirect($this, 'configure');
+        } else {
+            $form->setValuesByPost();
+            $this->tpl->setContent($form->getHtml());
+        }
+    }
 }

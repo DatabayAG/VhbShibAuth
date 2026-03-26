@@ -85,6 +85,7 @@ Konfigurieren und aktivieren Sie zunächst unter "Administration > Authentifizie
 
 * Shibboleth-Authentifizierung aktivieren: ja
 * Erlaube lokale Authentifizierung: ja
+* Erstellung von Anmeldekonten: Aktiviert
 * Generelle Rolle für Shibboleth-Benutzer: User (oder andere, je nach Ihrer ILIAS-Installation)
 * Name der Shibboleth-Föderation: vhb
 * Auswahl der Organisation: Anmeldebereich selber gestalten
@@ -115,7 +116,7 @@ Das Plugin erkennt auch LV-Nummern, die in älteren ILIAS-Versionen im Metadaten
 ALTER TABLE `il_meta_keyword` ADD INDEX `temp_keyword` (`keyword`);
 ````
 
-Ein ILIAS-Kurs kann mehrere LV-Nummerm zugeordnet haben und damit Mitglieder aus mehreren vhb-Kursen, z.B. unterschiedlicher Semester aufnehmen.
+Ein ILIAS-Kurs kann mehrere LV-Nummern zugeordnet haben und damit Mitglieder aus mehreren vhb-Kursen, beispielsweise unterschiedlicher Semester aufnehmen.
 Sie Können bei der LV-Nummer auch Wildcards (? und *) verwenden. Werden bei der Authentifizierung zu einer vhb-Kursbuchung mehrere passende
 ILIAS-Kurse gefunden, erscheint für Studierende eine Auswahlseite. Evaluatoren und Gäste werden automatisch in alle passenden Kurse eingeschrieben,
-sofern sie eine entsprechnende Rolle enthalten.
+sofern sie dort eine entsprechende Rolle enthalten.

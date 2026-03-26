@@ -1,4 +1,5 @@
 <?php
+
 // Copyright (c) 2020-2023 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 /**
@@ -95,12 +96,10 @@ class ilVhbShibAuthMatching
         if (empty($lvnr)) {
             // no deep link => offer all that need selection
             return $this->coursesToSelect;
-        }
-        elseif (isset($this->coursesToSelect[$lvnr])) {
+        } elseif (isset($this->coursesToSelect[$lvnr])) {
             // deep link needs selection => offer only this
             return [$lvnr => $this->coursesToSelect[$lvnr]];
-        }
-        else {
+        } else {
             // deep link does not need a selection => dont' offer a selection
             return [];
         }
@@ -120,7 +119,7 @@ class ilVhbShibAuthMatching
      */
     public function loadCoursesToSelect()
     {
-        $this->coursesToSelect = (array)  $_SESSION['ilVhbShibAuth']['coursesToSelect'];
+        $this->coursesToSelect = (array) $_SESSION['ilVhbShibAuth']['coursesToSelect'];
     }
 
     /**
@@ -146,8 +145,7 @@ class ilVhbShibAuthMatching
     {
         $this->coursesToSelect = [];
 
-        foreach ($this->getEntitledVhbCourses() as $lvnr => $role)
-        {
+        foreach ($this->getEntitledVhbCourses() as $lvnr => $role) {
             $course_data = $this->findMatchingIliasCourses($lvnr);
             $course_refs = array_keys($course_data);
 
@@ -164,8 +162,7 @@ class ilVhbShibAuthMatching
             foreach ($course_data as $ref_id => $data) {
                 if ($data['to_confirm']) {
                     $this->coursesToSelect[$lvnr] = [$ref_id];
-                }
-                else {
+                } else {
                     $this->assignCourse($user->getId(), $ref_id, $role);
                 }
             }
@@ -178,7 +175,7 @@ class ilVhbShibAuthMatching
      * @param int[] $ref_ids
      * @return int
      */
-    public function getParticipationRefId($user_id, $ref_ids=[])
+    public function getParticipationRefId($user_id, $ref_ids = [])
     {
         foreach ($ref_ids as $ref_id) {
             if (ilParticipants::_isParticipant($ref_id, $user_id)) {
@@ -199,8 +196,7 @@ class ilVhbShibAuthMatching
         if ($this->plugin->isInStudOn()) {
             $cw = new ilCourseWaitingList($obj_id);
             $cw->addToList($user_id, '', 1); // REQUEST:TO_CONFIRM
-        }
-        else {
+        } else {
             $cp = new ilCourseParticipants($obj_id);
             $cp->addSubscriber($user_id);
         }
@@ -217,8 +213,7 @@ class ilVhbShibAuthMatching
         if ($this->plugin->isInStudOn()) {
             $cw = new ilCourseWaitingList($obj_id);
             $cw->removeFromList($user_id);
-        }
-        else {
+        } else {
             $cp = new ilCourseParticipants($obj_id);
             $cp->deleteSubscriber($user_id);
         }
@@ -235,8 +230,7 @@ class ilVhbShibAuthMatching
         if ($this->plugin->isInStudOn()) {
             $cw = new ilCourseWaitingList($obj_id);
             return $cw->isOnList($user_id);
-        }
-        else {
+        } else {
             $cp = new ilCourseParticipants($obj_id);
             return $cp->isSubscriber($user_id);
         }
@@ -253,10 +247,8 @@ class ilVhbShibAuthMatching
         /** @var ilCourseParticipants $cp */
         $obj_id = ilObject::_lookupObjId($ref_id);
         $cp = ilCourseParticipants::_getInstanceByObjId($obj_id);
-        if (!$cp->isAssigned($user_id))
-        {
-            switch($role)
-            {
+        if (!$cp->isAssigned($user_id)) {
+            switch ($role) {
                 case 'student':
                     $cp->add($user_id, ilParticipants::IL_CRS_MEMBER);
                     $this->recommendedContentManager->addObjectRecommendation($user_id, $ref_id);
@@ -288,13 +280,11 @@ class ilVhbShibAuthMatching
     {
         global $DIC;
         $rbacreview = $DIC->rbac()->review();
-        $rbacadmin  = $DIC->rbac()->admin();
+        $rbacadmin = $DIC->rbac()->admin();
 
-        foreach ($rbacreview->getLocalRoles($ref_id) as $rol_id)
-        {
+        foreach ($rbacreview->getLocalRoles($ref_id) as $rol_id) {
             $title = ilObjRole::_lookupTitle($rol_id);
-            if (fnmatch($pattern, $title))
-            {
+            if (fnmatch($pattern, $title)) {
                 $rbacadmin->assignUser($rol_id, $usr_id);
                 break;
             }
@@ -312,15 +302,13 @@ class ilVhbShibAuthMatching
         $courses = array();
 
         $entitlements = explode(';', $_SERVER['eduPersonEntitlement'] ?? '');
-        foreach ($entitlements as $entitlement)
-        {
-            $parts = explode(':',$entitlement);
+        foreach ($entitlements as $entitlement) {
+            $parts = explode(':', $entitlement);
             $role = $parts[5] ?? '';
             $scope = $parts[6] ?? '';
             $lvnr = $parts[7] ?? '';
 
-            if ($scope == $this->config->get('local_scope') && !empty($role) && !empty($lvnr))
-            {
+            if ($scope == $this->config->get('local_scope') && !empty($role) && !empty($lvnr)) {
                 $courses[$lvnr] = $role;
             }
         }
@@ -336,14 +324,11 @@ class ilVhbShibAuthMatching
     public function findMatchingIliasCourses($lvnr)
     {
         $courses = array();
-        foreach ($this->findRelevantIliasCourses() as $ref_id => $data)
-        {
-            foreach ($data['lv_patterns'] as $pattern)
-            {
+        foreach ($this->findRelevantIliasCourses() as $ref_id => $data) {
+            foreach ($data['lv_patterns'] as $pattern) {
                 // use file name matching with wildcards to get courses with the LV number
                 // semester independent courses can have the following entries: LV_328_822_1_*_1
-                if (fnmatch(trim($pattern), $lvnr))
-                {
+                if (fnmatch(trim($pattern), $lvnr)) {
                     $courses[$ref_id] = $data;
                 }
             }
@@ -363,21 +348,26 @@ class ilVhbShibAuthMatching
 
             $queries = [
                 // find vhb course by LV number in catalog entry (ILIAS 5.4)
-                "SELECT o.obj_id, o.title, o.description, m.entry FROM il_meta_identifier m " .
-                " INNER JOIN object_data o ON m.obj_id = o.obj_id " .
-                " INNER JOIN crs_settings s ON s.obj_id = o.obj_id " .
-                " WHERE m.obj_type = 'crs'" .
-                " AND m.catalog = 'vhb'" .
-                " AND s.activation_type > 0"
-                ,
+                "    
+                    SELECT o.obj_id, o.title, o.description, m.entry 
+                    FROM il_meta_identifier m  
+                    INNER JOIN object_data o ON m.obj_id = o.obj_id  
+                    INNER JOIN crs_settings s ON s.obj_id = o.obj_id  
+                    WHERE m.obj_type = 'crs' 
+                    AND m.catalog = 'vhb' 
+                    AND s.activation_type > 0
+                ",
                 // find vhb course by LV number in keyword (ILIAS 7 and higher)
-                "SELECT o.obj_id, o.title, o.description, m.keyword entry FROM il_meta_keyword m " .
-                " INNER JOIN object_data o ON m.obj_id = o.obj_id " .
-                " INNER JOIN crs_settings s ON s.obj_id = o.obj_id " .
-                " WHERE m.obj_type = 'crs'" .
-                " AND m.keyword LIKE 'LV_%'" .
-                " AND s.activation_type > 0"
-                ];
+                "
+                    SELECT o.obj_id, o.title, o.description, m.keyword entry 
+                    FROM il_meta_keyword m  
+                    INNER JOIN object_data o ON m.obj_id = o.obj_id  
+                    INNER JOIN crs_settings s ON s.obj_id = o.obj_id  
+                    WHERE m.obj_type = 'crs' 
+                    AND m.keyword LIKE 'LV_%' 
+                    AND s.activation_type > 0
+                "
+            ];
 
             foreach ($queries as $query) {
 
@@ -402,7 +392,7 @@ class ilVhbShibAuthMatching
                     }
                 }
             }
-         }
+        }
 
         return $this->courses;
     }
@@ -444,7 +434,7 @@ class ilVhbShibAuthMatching
         '$_POST: ',
         print_r($_POST, true),
         '$_COOKIE: ',
-        print_r($_COOKIE,true)
+        print_r($_COOKIE, true)
         ]));
     }
 

@@ -1,11 +1,12 @@
 <?php
+
 // Copyright (c) 2020-2023 Institut fuer Lern-Innovation, Friedrich-Alexander-Universitaet Erlangen-Nuernberg, GPLv3, see LICENSE
 
 /**
  * Plugin definition
  */
-class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements ilShibbolethAuthenticationPluginInt {
-
+class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements ilShibbolethAuthenticationPluginInt
+{
     /**
      * @var ilVhbShibAuthConfig
      */
@@ -48,7 +49,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      */
     public function isInStudOn()
     {
-        return is_dir(__DIR__ . '/../../../../../../../../Services/FAU');
+        return is_dir(__DIR__ . '/../../../../../../../../../Services/FAU');
     }
 
     /**
@@ -57,8 +58,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      */
     public function getConfig()
     {
-        if (!isset($this->config))
-        {
+        if (!isset($this->config)) {
             $this->config = new ilVhbShibAuthConfig($this);
         }
         return $this->config;
@@ -76,7 +76,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
         }
 
         // apply test data as early as possible
-        if (!empty($_GET['test']) &&  $_GET['test'] == $this->getConfig()->get('test_activation')) {
+        if (!empty($_GET['test']) && $_GET['test'] == $this->getConfig()->get('test_activation')) {
             if (!empty($this->getConfig()->get('test_given_name'))) {
                 $_SERVER['givenName'] = $this->getConfig()->get('test_given_name');
             }
@@ -136,9 +136,8 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
             if (isset($_GET['id'])) {
                 $DIC->ctrl()->setParameterByClass('ilVhbShibAuthCourseSelectGUI', 'deepLink', $_GET['id']);
             }
-            $this->redirect_url = $DIC->ctrl()->getLinkTargetByClass(['iluipluginroutergui','ilVhbShibAuthCourseSelectGUI'],null,null, true);
-        }
-        elseif (isset($_GET['id']) && !isset($_GET['target'])) {
+            $this->redirect_url = $DIC->ctrl()->getLinkTargetByClass(['iluipluginroutergui','ilVhbShibAuthCourseSelectGUI'], null, null, true);
+        } elseif (isset($_GET['id']) && !isset($_GET['target'])) {
             if ($ref_id = $this->getMatching()->getTargetCourseRefId($user, $_GET['id'])) {
                 $this->redirect_url = ilLink::_getLink($ref_id, 'crs');
             }
@@ -168,7 +167,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      */
     public function beforeCreateUser(ilObjUser $user): ilObjUser
     {
-        $user =  $this->getMatching()->getMatchedUser();
+        $user = $this->getMatching()->getMatchedUser();
         $this->getMatching()->checkAccess($user);
         return $user;
     }
@@ -182,7 +181,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      */
     public function beforeUpdateUser(ilObjUser $user): ilObjUser
     {
-        $user =  $this->getMatching()->getMatchedUser();
+        $user = $this->getMatching()->getMatchedUser();
         $this->getMatching()->checkAccess($user);
         return $user;
     }
@@ -233,7 +232,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function afterLogin(ilObjUser $user): ilObjUser 
+    public function afterLogin(ilObjUser $user): ilObjUser
     {
         return $user;
     }
@@ -243,7 +242,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function beforeLogout(ilObjUser $user): ilObjUser 
+    public function beforeLogout(ilObjUser $user): ilObjUser
     {
         return $user;
     }
@@ -253,7 +252,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param ilObjUser $user
      * @return ilObjUser
      */
-    public function afterLogout(ilObjUser $user): ilObjUser 
+    public function afterLogout(ilObjUser $user): ilObjUser
     {
         return $user;
     }
@@ -264,7 +263,7 @@ class ilVhbShibAuthPlugin extends ilShibbolethAuthenticationPlugin implements il
      * @param string	$a_event
      * @param mixed		$a_parameter
      */
-    public function handleEvent($a_component, $a_event, $a_parameter)
+    public function handleEvent(string $a_component, string $a_event, $a_parameter): void
     {
         global $DIC;
         if ($a_event == 'afterLogin' && !empty($this->redirect_url)) {
