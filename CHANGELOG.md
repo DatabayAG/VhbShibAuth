@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.4.0 (2026-05-26)
+- Version for ILIAS 10
+
 ## Version 1.3.1 (2025-01-07)
 - Fix error with empty eduPersonEntitlement
 
