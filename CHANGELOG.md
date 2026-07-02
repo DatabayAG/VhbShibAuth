@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.5.0 (in progress)
+- Version for ILIAS 11
+
 ## Version 1.4.0 (2026-05-26)
 - Version for ILIAS 10
 
